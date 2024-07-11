@@ -77,8 +77,7 @@ export default {
 
 <template>
   <main ref="statusPanel" class="statusPanel">
-    <input type="checkbox" id="expertMode" class="hidden">
-    <label for="expertMode">Modo Experto</label>
+
     <h1>Status</h1>
     <h2>Tus Datos</h2>
     <table>
@@ -130,6 +129,7 @@ export default {
   display: flex;
   flex-direction: column;
   flex: 1;
+  overflow-y: scroll;
 }
 
 .jobTable, .answersTable {
@@ -159,19 +159,4 @@ export default {
   margin: 5px;
 }
 
-input[type="checkbox"] + label {
-  display: inline-block;
-  background: #cbcbcb;
-  color: black;
-  border: 2px solid yellow;
-  padding: 10px;
-  margin: 5px 0;
-  border-radius: 10px;
-  cursor: pointer;
-}
-
-input[type="checkbox"]:checked + label {
-  background: yellow;
-  color: black;
-}
 </style>

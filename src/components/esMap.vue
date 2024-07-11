@@ -305,7 +305,7 @@ export default {
               $(mapConfig[id].url).modal("show");
               break;
             default:
-              parentComponent.sendMessage('user', {'text': mapConfig[id].url})
+              parentComponent.setInputValue(mapConfig[id].url)
               break;
 
           }

@@ -1,6 +1,23 @@
 export default {
     countries: [
         {
+            "text": "América del Sur",
+            "options": [
+                "Argentina",
+                "Bolivia",
+                "Brasil",
+                "Chile",
+                "Colombia",
+                "Ecuador",
+                "Guyana",
+                "Paraguay",
+                "Perú",
+                "Surinam",
+                "Uruguay",
+                "Venezuela"
+            ]
+        },
+        {
             "text": "Europa",
             "options": [
                 "España",
@@ -52,38 +69,6 @@ export default {
                 "Suiza",
                 "Ucrania",
                 "Vaticano"
-            ]
-        },
-        {
-            "text": "América del Sur",
-            "options": [
-                "Argentina",
-                "Bolivia",
-                "Brasil",
-                "Chile",
-                "Colombia",
-                "Ecuador",
-                "Guyana",
-                "Paraguay",
-                "Perú",
-                "Surinam",
-                "Uruguay",
-                "Venezuela"
-            ]
-        },
-        {
-            "text": "América del Norte",
-            "options": [
-                "Canadá",
-                "Estados Unidos",
-                "México",
-                "Belice",
-                "Costa Rica",
-                "El Salvador",
-                "Guatemala",
-                "Honduras",
-                "Nicaragua",
-                "Panamá"
             ]
         },
         {
@@ -144,6 +129,21 @@ export default {
                 "Yibuti",
                 "Zambia",
                 "Zimbabue"
+            ]
+        },
+        {
+            "text": "América del Norte",
+            "options": [
+                "Canadá",
+                "Estados Unidos",
+                "México",
+                "Belice",
+                "Costa Rica",
+                "El Salvador",
+                "Guatemala",
+                "Honduras",
+                "Nicaragua",
+                "Panamá"
             ]
         },
         {
@@ -221,148 +221,148 @@ export default {
         {
             "text": "Andalucía",
             "options": [
-                {"text": "Almería", "options": []},
-                {"text": "Cádiz", "options": []},
-                {"text": "Córdoba", "options": []},
-                {"text": "Granada", "options": []},
-                {"text": "Huelva", "options": []},
-                {"text": "Jaén", "options": []},
-                {"text": "Málaga", "options": []},
-                {"text": "Sevilla", "options": []},
+                "Almería",
+                "Cádiz",
+                "Córdoba",
+                "Granada",
+                "Huelva",
+                "Jaén",
+                "Málaga",
+                "Sevilla"
             ]
         },
         {
             "text": "Aragón",
             "options": [
-                {"text": "Huesca", "options": []},
-                {"text": "Teruel", "options": []},
-                {"text": "Zaragoza", "options": []},
+                "Huesca",
+                "Teruel",
+                "Zaragoza"
             ]
         },
         {
             "text": "Asturias",
             "options": [
-                {"text": "Asturias", "options": []},
+                "Asturias"
             ]
         },
         {
             "text": "Islas Baleares",
             "options": [
-                {"text": "Islas Baleares", "options": []},
+                "Islas Baleares"
             ]
         },
         {
             "text": "Canarias",
             "options": [
-                {"text": "Santa Cruz de Tenerife", "options": []},
-                {"text": "Las Palmas", "options": []},
+                "Santa Cruz de Tenerife",
+                "Las Palmas"
             ]
         },
         {
             "text": "Cantabria",
             "options": [
-                {"text": "Cantabria", "options": []},
+                "Cantabria"
             ]
         },
         {
             "text": "Castilla-La Mancha",
             "options": [
-                {"text": "Albacete", "options": []},
-                {"text": "Ciudad Real", "options": []},
-                {"text": "Cuenca", "options": []},
-                {"text": "Guadalajara", "options": []},
-                {"text": "Toledo", "options": []},
+                "Albacete",
+                "Ciudad Real",
+                "Cuenca",
+                "Guadalajara",
+                "Toledo"
             ]
         },
         {
             "text": "Castilla y León",
             "options": [
-                {"text": "Ávila", "options": []},
-                {"text": "Burgos", "options": []},
-                {"text": "León", "options": []},
-                {"text": "Palencia", "options": []},
-                {"text": "Salamanca", "options": []},
-                {"text": "Segovia", "options": []},
-                {"text": "Soria", "options": []},
-                {"text": "Valladolid", "options": []},
-                {"text": "Zamora", "options": []},
+                "Ávila",
+                "Burgos",
+                "León",
+                "Palencia",
+                "Salamanca",
+                "Segovia",
+                "Soria",
+                "Valladolid",
+                "Zamora"
             ]
         },
         {
             "text": "Catalunya",
             "options": [
-                {"text": "Barcelona", "options": []},
-                {"text": "Tarragona", "options": []},
-                {"text": "Lleida", "options": []},
-                {"text": "Girona", "options": []},
+                "Barcelona",
+                "Tarragona",
+                "Lleida",
+                "Girona"
             ]
         },
         {
             "text": "Extremadura",
             "options": [
-                {"text": "Badajoz", "options": []},
-                {"text": "Cáceres", "options": []},
+                "Badajoz",
+                "Cáceres"
             ]
         },
         {
             "text": "Galicia",
             "options": [
-                {"text": "A Coruña", "options": []},
-                {"text": "Lugo", "options": []},
-                {"text": "Ourense", "options": []},
-                {"text": "Pontevedra", "options": []},
+                "A Coruña",
+                "Lugo",
+                "Ourense",
+                "Pontevedra"
             ]
         },
         {
             "text": "Comunidad de Madrid",
             "options": [
-                {"text": "Madrid", "options": []},
+                "Madrid"
             ]
         },
         {
             "text": "Región de Murcia",
             "options": [
-                {"text": "Murcia", "options": []},
+                "Murcia"
             ]
         },
         {
             "text": "Comunidad Foral de Navarra",
             "options": [
-                {"text": "Navarra", "options": []},
+                "Navarra"
             ]
         },
         {
             "text": "País Vasco",
             "options": [
-                {"text": "Álava", "options": []},
-                {"text": "Guipúzcoa", "options": []},
-                {"text": "Vizcaya", "options": []},
+                "Álava",
+                "Guipúzcoa",
+                "Vizcaya"
             ]
         },
         {
             "text": "La Rioja",
             "options": [
-                {"text": "La Rioja", "options": []},
+                "La Rioja"
             ]
         },
         {
             "text": "Comunidad Valenciana",
             "options": [
-                {"text": "Alicante", "options": []},
-                {"text": "Castellón", "options": []},
-                {"text": "Valencia", "options": []},
+                "Alicante",
+                "Castellón",
+                "Valencia"
             ]
         },
         {
             "text": "Ceuta",
             "options": [
-                {"text": "Ceuta", "options": []},
+                "Ceuta"
             ]
         },
         {
             "text": "Melilla",
             "options": [
-                {"text": "Melilla", "options": []},
+                "Melilla"
             ]
         }
     ],
