@@ -20,7 +20,7 @@
           </div>
           <div v-if="step.options.type === 'checkbox'">
             <div v-for="(option, idx) in step.options.content" :key="idx" class="checkboxGroup">
-              <input type="checkbox" :id="'checkbox-' + idx" class="checkbox" @change="recordCheckboxAnswer(step.text, option, $event.target.checked)" />
+              <input type="checkbox" :id="'checkbox-' + idx" class="checkbox" @change="recordAnswer(step)" />
               <label :for="'checkbox-' + idx" class="checkboxLabel">{{ option }}</label>
             </div>
             <button class="btn">Select All</button>
@@ -28,7 +28,7 @@
             <button class="btn">Invert Selection</button>
           </div>
           <div v-if="step.options.type === 'dropdown' || (step.options.type === 'map' && step.options.expert)">
-            <select class="dropdown" @change="recordAnswer(step.text, $event.target.value)">
+            <select class="dropdown" @change="recordAnswer(step)">
               <template v-for="(category, idx) in (step.options.type === 'dropdown' ?  step.options.content : step.options.expert)" :key="idx">
                 <optgroup :label="category.text">
                   <option v-for="option in category.options" :key="option">{{ option }}</option>
@@ -52,6 +52,7 @@
 
 <script>
 import conversation from '../assets/conversation.js';
+import eventBus from "../eventBus.js";
 
 export default {
   data() {
@@ -62,17 +63,9 @@ export default {
     };
   },
   methods: {
-    recordAnswer(question, answer) {
-      this.userAnswers.push({ type: 'user', text: `${question}: ${answer}` });
-      this.setDefaultAnswer({ text: question, answer: answer });
-    },
-    recordCheckboxAnswer(question, option, checked) {
-      if (checked) {
-        this.userAnswers.push({ type: 'user', text: `${question}: ${option}` });
-      } else {
-        this.userAnswers = this.userAnswers.filter(answer => answer.text !== `${question}: ${option}`);
-      }
-    }
+    recordAnswer(step) {
+      eventBus.emit('updateUserAnswers', step);
+        }
   }
 };
 

@@ -3,7 +3,7 @@
     <section ref="animationArea" class="animationArea"
              v-bind:style="{ 'background-image': 'url(' + silbAction + '_rect.gif)' }">
 
-      <input type="checkbox" id="helpMode" class="modeControls hidden" v-model="helpMode" >
+      <input type="checkbox" id="helpMode" class="modeControls hidden" v-model="helpMode">
       <label for="helpMode" class="modeControls" title="Modo Ayuda">?</label>
       <input type="checkbox" id="expertMode" class="modeControls hidden" v-model="expertMode">
       <label for="expertMode" class="modeControls" title="Modo Experto"><img src="../assets/expert.png"/></label>
@@ -116,15 +116,16 @@ export default {
     }
   },
   computed: {
-    filteredOptions() {
-      if (!this.currentMessage || this.currentMessage.options.type !== 'buttons') {
-        return [];
-      }
-      const searchTerm = this.userInput.toLowerCase();
-      return this.currentMessage.options.content.filter(option =>
-          option.toLowerCase().includes(searchTerm)
-      );
-    }
+    // filteredOptions() {
+    //   //TODO => Add functionality so that as the user types, the options in the question are part-matched and offered, with tab to fill.
+    //   if (!this.currentMessage || this.currentMessage.options.type !== 'buttons') {
+    //     return [];
+    //   }
+    //   const searchTerm = this.userInput.toLowerCase();
+    //   return this.currentMessage.options.content.filter(option =>
+    //       option.toLowerCase().includes(searchTerm)
+    //   );
+    // }
   },
   methods: {
     sendMessage(author, message) {
@@ -158,6 +159,10 @@ export default {
     },
 
     handleSilbMessage(message) {
+      if (this.expertMode) {
+        console.log('Chat mode off, no message is printed');
+        return;
+      }
       this.silbAction = 'talk';
       this.step++;
       this.messages.push({text: message.text.charAt(0), author: 'silb', optionSelected: false});
@@ -311,7 +316,7 @@ export default {
 
     },
     handleUserInput() {
-      //TODO => Add functionality so that as the user types, the options in the question are part-matched and offered, with tab to fill.
+
       const userMessage = this.$refs.userInput.value;
       if (this.messages.length) {
 
@@ -517,10 +522,12 @@ section.animationArea {
   padding: 10px 0;
   justify-content: center;
 }
-  #userForm button:hover {
-    background: gold;
-    border: 1px solid #cbcbcb;
-  }
+
+#userForm button:hover {
+  background: gold;
+  border: 1px solid #cbcbcb;
+}
+
 #userInput {
   padding: .5em;
   display: flex;
@@ -564,17 +571,18 @@ input.modeControls:checked + label {
 
 }
 
-.modeControls img{
+.modeControls img {
   height: 30px;
 }
+
 #expertMode + label {
   right: 0;
-  top:50px;
+  top: 50px;
 }
 
 #helpMode + label {
   right: 0;
-  top:0;
+  top: 0;
 }
 
 
