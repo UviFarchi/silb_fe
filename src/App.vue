@@ -1,5 +1,5 @@
 <script>
-import Chat from "./components/chat.vue";
+import Chat from "./components/chatMode.vue";
 import StatusPanel from "./components/statusPanel.vue";
 import  EventBus  from './eventBus.js';
 
@@ -11,15 +11,23 @@ export default {
     }
   },
   mounted() {
-    EventBus.on('updateUserAnswers', this.updateUserAnswers);
-    EventBus.on('startNewRun', this.startNewRun);
+    this.$eventBus.on('updateUserAnswers', this.updateUserAnswers);
+    this.$eventBus.on('startNewRun', this.startNewRun);
+    this.$eventBus.on('newNotification', this.sendNotificationInChat)
   },
   methods: {
     updateUserAnswers(newAnswer) {
-      this.$refs.statusPanel.addUserAnswer(newAnswer);
+      this.$refs.statusPanel.handleUserAnswer(newAnswer);
     },
     startNewRun(e) {
       this.$refs.statusPanel.startNewRun();
+    },
+    sendNotificationInChat(message){
+      console.log('send notification event received.')
+      this.$refs.chat.sendMessage('silb',  {
+        "text": message,
+        "options": {"type": "info"}
+      })
     }
   }
 }
@@ -27,7 +35,7 @@ export default {
 
 <template>
   <div class="app_wrapper">
-    <chat></chat>
+    <chat ref="chat"></chat>
     <status-panel ref="statusPanel"></status-panel>
   </div>
 </template>

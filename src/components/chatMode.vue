@@ -2,18 +2,20 @@
   <main class="chatWrapper">
     <section ref="animationArea" class="animationArea"
              v-bind:style="{ 'background-image': 'url(' + silbAction + '_rect.gif)' }">
-
-      <input type="checkbox" id="helpMode" class="modeControls hidden" v-model="helpMode">
-      <label for="helpMode" class="modeControls" title="Modo Ayuda">?</label>
-      <input type="checkbox" id="expertMode" class="modeControls hidden" v-model="expertMode">
-      <label for="expertMode" class="modeControls" title="Modo Experto"><img src="../assets/expert.png"/></label>
+      <div id="modeCtrl">
+        <input type="checkbox" id="helpMode" class="modeControls hidden" v-model="helpMode">
+        <label for="helpMode" class="modeControls" title="Modo Ayuda">?</label>
+        <input type="checkbox" id="expertMode" class="modeControls hidden" v-model="expertMode">
+        <label for="expertMode" class="modeControls" title="Modo Experto">
+          <img src="../assets/expert.png" alt="Modo Experto"/></label>
+      </div>
     </section>
     <section ref="chatArea" class="chatArea" @keydown.enter="handleUserInput">
       <div ref="chatStream" class="chatStream" v-if="!expertMode && !helpMode">
         <div v-for="(message, idx) in messages" :key="message.text" class="message"
              :class="{ 'messageUser': message.author === 'user', 'messageSilb': message.author !== 'user' }"
              :style="{ float: message.author === 'user' ? 'right' : 'left' }">
-          {{ message.text }}
+          <p v-html="message.text "/>
 
           <es-map v-if="message.options?.type==='map' && idx === messages.length - 1"></es-map>
 
@@ -82,7 +84,7 @@
 import silbConvo from '../assets/conversation.js';
 import eventBus from '../eventBus.js';
 
-import EsMap from "./esMap.vue";
+import EsMap from "./messageTypes/esMap.vue";
 import StatusPanel from "./statusPanel.vue";
 import ExpertMode from "./expertMode.vue";
 import HelpMode from "./helpMode.vue";
@@ -105,27 +107,30 @@ export default {
   },
   watch: {
     helpMode(newVal) {
+      // this.messages =[];
       if (newVal) {
         this.expertMode = false;
       }
     },
     expertMode(newVal) {
+      // this.messages =[];
+      console.log('expertmode', newVal)
       if (newVal) {
         this.helpMode = false;
       }
     }
   },
   computed: {
-    // filteredOptions() {
-    //   //TODO => Add functionality so that as the user types, the options in the question are part-matched and offered, with tab to fill.
-    //   if (!this.currentMessage || this.currentMessage.options.type !== 'buttons') {
-    //     return [];
-    //   }
-    //   const searchTerm = this.userInput.toLowerCase();
-    //   return this.currentMessage.options.content.filter(option =>
-    //       option.toLowerCase().includes(searchTerm)
-    //   );
-    // }
+    filteredOptions() {
+      //TODO => Add functionality so that as the user types, the options in the question are part-matched and offered, with tab to fill.
+      if (!this.currentMessage || this.currentMessage.options.type !== 'buttons') {
+        return [];
+      }
+      const searchTerm = this.userInput.toLowerCase();
+      return this.currentMessage.options.content.filter(option =>
+          option.toLowerCase().includes(searchTerm)
+      );
+    }
   },
   methods: {
     sendMessage(author, message) {
@@ -159,10 +164,6 @@ export default {
     },
 
     handleSilbMessage(message) {
-      if (this.expertMode) {
-        console.log('Chat mode off, no message is printed');
-        return;
-      }
       this.silbAction = 'talk';
       this.step++;
       this.messages.push({text: message.text.charAt(0), author: 'silb', optionSelected: false});

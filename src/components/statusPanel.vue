@@ -1,4 +1,6 @@
 <script>
+import eventBus from "../eventBus.js";
+
 export default {
   name: "statusPanel",
   data() {
@@ -16,9 +18,18 @@ export default {
     }
   },
   methods: {
-    addUserAnswer(answer) {
-      console.log(this.userAnswers[this.userAnswers.length - 1]);
-      this.userAnswers[this.userAnswers.length - 1].push(answer.text); // Ensure only text is pushed
+    handleUserAnswer(answer) {
+      console.log('answer received:' + answer);
+      let currentAnswers = this.userAnswers[this.userAnswers.length - 1];
+
+      if (answer?.index < currentAnswers.length) { //Answer has been modified
+        console.log(answer.index)
+        currentAnswers[answer.index] = answer.text;
+        currentAnswers.length = answer.index + 1;
+
+      } else {
+        currentAnswers.push(answer.text); // New Answer
+      }
     },
     startNewRun() {
       this.startJob(this.userAnswers[this.userAnswers.length - 1]);
@@ -29,7 +40,7 @@ export default {
     async startJob(userAnswers) {
       const jobIdPlaceholder = 'pending_' + new Date().getTime();
       this.jobIds.push(jobIdPlaceholder);
-      this.runStatus[jobIdPlaceholder] = { result: 'Sin iniciar', url: '' }; // Set initial status
+      this.runStatus[jobIdPlaceholder] = {result: 'Sin iniciar', url: ''}; // Set initial status
 
       const response = await fetch('http://localhost:3000/start-job', {
         method: 'POST',
@@ -46,7 +57,7 @@ export default {
       if (index !== -1) {
         this.jobIds.splice(index, 1, data.jobId);
       }
-      this.runStatus = { ...this.runStatus, [data.jobId]: { result: 'En la cola', url: '' } }; // Maintain initial status
+      this.runStatus = {...this.runStatus, [data.jobId]: {result: 'En la cola', url: ''}}; // Maintain initial status
 
       this.listenForJobCompletion(data.jobId);
     },
@@ -55,9 +66,10 @@ export default {
       this.eventSource.onmessage = (event) => {
         const data = JSON.parse(event.data);
         console.log('Event received:', data);
+        eventBus.emit('newNotification', `Parece que hemos encontrado ${data.result} que necesitas. Pulsa <a href="${data.url}" target="_blank">aquí </a> para acceder a ella.`);
         if (data.jobId === jobId) {
           // Directly update runStatus with result and url
-          this.runStatus = { ...this.runStatus, [jobId]: { result: data.result, url: data.url } };
+          this.runStatus = {...this.runStatus, [jobId]: {result: data.result, url: data.url}};
           this.eventSource.close();
         }
       };
@@ -77,20 +89,12 @@ export default {
 
 <template>
   <main ref="statusPanel" class="statusPanel">
-
-    <h1>Status</h1>
-    <h2>Tus Datos</h2>
-    <table>
-      <tr>
-        <td>Nombre:</td>
-        <td>Jordi Brotons</td>
-      </tr>
-      <tr>
-        <td>Organización:</td>
-        <td>Colegio de Abogados de Barcelona</td>
-      </tr>
-    </table>
-    <h2>Tus Colas</h2>
+    <h1>SILB.io</h1>
+    <img class="silbIcon" src="../assets/silb_icon.png" alt="Stand In Line Bot"/>
+    <h2>Stand In Line Bot</h2>
+    <h3>Usuario</h3>
+    <p id="userId">Jordi Brotons <br> Colegio de Abogados de Barcelona</p>
+    <h3>Tus Colas</h3>
     <table class="jobTable">
       <thead>
       <tr>
@@ -110,7 +114,8 @@ export default {
         <td>
           <div v-if="runStatus[jobIds[index]]">
             <div>{{ runStatus[jobIds[index]].result }}</div>
-            <a v-if="runStatus[jobIds[index]].url" :href="runStatus[jobIds[index]].url" target="_blank">{{ runStatus[jobIds[index]].url }}</a>
+            <a v-if="runStatus[jobIds[index]].url" :href="runStatus[jobIds[index]].url"
+               target="_blank">{{ runStatus[jobIds[index]].url }}</a>
           </div>
           <div v-else>Sin iniciar</div>
         </td>
@@ -124,6 +129,24 @@ export default {
 .hidden {
   display: none;
 }
+
+h1, h2, h3 {
+  color: gold;
+  text-shadow: 1px 1px #1a1a1a;
+  text-align: center;
+}
+
+h1, h2 {
+  margin: 0;
+}
+
+h3 {
+  padding-top: 10px;
+  border-top: 1px solid gold;
+  width: 100%;
+  margin-bottom: 5px;
+}
+
 
 .statusPanel {
   display: flex;
@@ -159,4 +182,14 @@ export default {
   margin: 5px;
 }
 
+.silbIcon {
+  margin: 0 auto;
+  height: 240px;
+  width: 240px;
+}
+
+#userId {
+  text-align: left;
+  padding-left: 10px;
+}
 </style>

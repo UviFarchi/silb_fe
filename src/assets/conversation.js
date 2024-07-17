@@ -5,7 +5,7 @@ export default {
     steps: [
         {
             "text": "Hola, soy Silb.io, el robot que se pone en la cola para hacer cita en la administración pública por tí.\nSi en cualquier momento tienes dudas escribe 'ayuda', y te explicaré como usarme, o presiona el botón de ayuda aquí arriba.",
-            "short": "Administración",
+            "short": "Hola",
             "options": {"type": "info"}
         },
         {
@@ -60,7 +60,7 @@ export default {
         },
         {
             "text": "Con esto tengo suficiente información. Me pongo a la cola y te aviso cuando haya encontrado citas disponibles. Si necesitas hacer más citas pulsa aquí.",
-            "short": "¿Otra cita?",
+            "short": "A la cola!",
             "options": {"type": "reset", "content": "Otra Cita"}
         }
     ]

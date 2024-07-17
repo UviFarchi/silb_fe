@@ -1,5 +1,11 @@
-import { createApp } from 'vue'
-import './style.css'
-import App from './App.vue'
+import { createApp } from 'vue';
+import App from './App.vue';
+import './style.css';
+import EventBus from './eventBus.js';
 
-createApp(App).mount('#app')
+const app = createApp(App);
+
+// Use the event bus for global event handling
+app.config.globalProperties.$eventBus = EventBus;
+
+app.mount('#app');
