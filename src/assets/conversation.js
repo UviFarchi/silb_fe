@@ -42,7 +42,7 @@ export default {
         },
         {
             "text": "Vale, pues para ese trámite me hacen falta los datos del Solicitante. ¿Pasaporte o DNI?",
-            "short": "¿Pasaporte o DNI?",
+            "short": "Tipo de Documento",
             "options": {"type": "buttons", "content": ["DNI", "Pasaporte"]}
         },
         {
@@ -51,11 +51,13 @@ export default {
             "options": {"type": "dropdown", "content": references.countries}
         },
         {
-            "text": "Número de pasaporte",
+            "text": "Cuál es el número de pasaporte",
+            "short": "Número de pasaporte",
             "options": {"type": "text"}
         },
         {
-            "text": "Nombre y Apellidos",
+            "text": "Nombre y apellidos, por favor.",
+            "short": "Nombre Completo",
             "options": {"type": "text"}
         },
         {

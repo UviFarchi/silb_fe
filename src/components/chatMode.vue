@@ -1,125 +1,92 @@
 <template>
-  <main class="chatWrapper">
-    <section ref="animationArea" class="animationArea"
-             v-bind:style="{ 'background-image': 'url(' + silbAction + '_rect.gif)' }">
-      <div id="modeCtrl">
-        <input type="checkbox" id="helpMode" class="modeControls hidden" v-model="helpMode">
-        <label for="helpMode" class="modeControls" title="Modo Ayuda">?</label>
-        <input type="checkbox" id="expertMode" class="modeControls hidden" v-model="expertMode">
-        <label for="expertMode" class="modeControls" title="Modo Experto">
-          <img src="../assets/expert.png" alt="Modo Experto"/></label>
-      </div>
-    </section>
-    <section ref="chatArea" class="chatArea" @keydown.enter="handleUserInput">
-      <div ref="chatStream" class="chatStream" v-if="!expertMode && !helpMode">
-        <div v-for="(message, idx) in messages" :key="message.text" class="message"
-             :class="{ 'messageUser': message.author === 'user', 'messageSilb': message.author !== 'user' }"
-             :style="{ float: message.author === 'user' ? 'right' : 'left' }">
-          <p v-html="message.text "/>
+  <main ref="chatArea" class="chatArea" @keydown.enter="handleUserInput">
+    <div ref="chatStream" class="chatStream">
+      <div v-for="(message, idx) in messages" :key="message.text" class="message"
+           :class="{ 'messageUser': message.author === 'user', 'messageSilb': message.author !== 'user' }"
+           :style="{ float: message.author === 'user' ? 'right' : 'left' }">
+        <p v-html="message.text "/>
 
-          <es-map v-if="message.options?.type==='map' && idx === messages.length - 1"></es-map>
+        <es-map v-if="message.options?.type==='map' && idx === messages.length - 1"></es-map>
 
-          <div class="optionButtonsContainer">
-            <button v-if="message.options?.type==='buttons'" v-for="(option, index) in message.options.content"
-                    :key="index" class="optionButtons" :style="'background:'+ this.assignColor(index)"
-                    @click="(e)=>{setInputValue(option)}">{{ option }}
-            </button>
-          </div>
-          <div v-if="message.options?.type==='checkbox' && idx === messages.length - 1" class="checkboxContainer">
-            <div id="checkboxCrtlContainer">
-              <button @click="selectAll(message)" title="Seleccionar Todas"><img src="../assets/select_all.png"
-                                                                                 alt="Seleccionar Todas"/></button>
-              <button @click="deselectAll(message)" title="No Seleccionar Ninguna"><img src="../assets/select_none.png"
-                                                                                        alt="No Seleccionar Ninguna"/>
-              </button>
-              <button @click="submitSelection(message)" title="Confirmar Selección">OK</button>
-            </div>
-            <div v-for="(option, index) in message.options.content" :key="index" class="checkboxPair">
-              <input type="checkbox" :id="option" :value="option" v-model="message.selectedCheckboxes">
-              <label :for="option">{{ option }}</label>
-            </div>
-
-          </div>
-          <div v-if="message.options?.type==='dropdown'" class="dropdownWrapper">
-            <select v-model="message.selectedOption" @change="handleOptionSelection($event, message)" class="dropdown">
-              <option disabled value="">Select an option</option>
-              <option v-for="option in message.options.content" :key="option.text" :value="option.text">{{
-                  option.text
-                }}
-              </option>
-            </select>
-            <select v-if="message.selectedOption" v-model="message.selectedSubOption"
-                    @change="handleSubOptionSelection($event, message)" class="dropdown">
-              <option disabled value="">Select a sub-option</option>
-              <option
-                  v-for="subOption in message.options.content.find(opt => opt.text === message.selectedOption)?.options"
-                  :key="subOption" :value="subOption">{{ subOption }}
-              </option>
-            </select>
-          </div>
-          <div v-if="message.options?.type==='text' && idx === messages.length - 1">
-
-          </div>
-          <button class='resetButton' v-if="message.options?.type==='reset' && idx === messages.length - 1"
-                  @click="restartChat">
-            {{ message.options.content }}
+        <div class="optionButtonsContainer">
+          <button v-if="message.options?.type==='buttons'" v-for="(option, index) in message.options.content"
+                  :key="index" class="optionButtons" :style="'background:'+ this.assignColor(index)"
+                  @click="(e)=>{setInputValue(option)}">{{ option }}
           </button>
         </div>
-        <div id="spacer" :style="{ height: spacerHeight + 'px' }"></div>
+        <div v-if="message.options?.type==='checkbox' && idx === messages.length - 1" class="checkboxContainer">
+          <div id="checkboxCrtlContainer">
+            <button @click="selectAll(message)" title="Seleccionar Todas"><img src="../assets/select_all.png"
+                                                                               alt="Seleccionar Todas"/></button>
+            <button @click="deselectAll(message)" title="No Seleccionar Ninguna"><img src="../assets/select_none.png"
+                                                                                      alt="No Seleccionar Ninguna"/>
+            </button>
+            <button @click="submitSelection(message)" title="Confirmar Selección">OK</button>
+          </div>
+          <div v-for="(option, index) in message.options.content" :key="index" class="checkboxPair">
+            <input type="checkbox" :id="option" :value="option" v-model="message.selectedCheckboxes">
+            <label :for="option">{{ option }}</label>
+          </div>
+
+        </div>
+        <div v-if="message.options?.type==='dropdown'" class="dropdownWrapper">
+          <select v-model="message.selectedOption" @change="handleOptionSelection($event, message)" class="dropdown">
+            <option disabled value="">Select an option</option>
+            <option v-for="option in message.options.content" :key="option.text" :value="option.text">{{
+                option.text
+              }}
+            </option>
+          </select>
+          <select v-if="message.selectedOption" v-model="message.selectedSubOption"
+                  @change="handleSubOptionSelection($event, message)" class="dropdown">
+            <option disabled value="">Select a sub-option</option>
+            <option
+                v-for="subOption in message.options.content.find(opt => opt.text === message.selectedOption)?.options"
+                :key="subOption" :value="subOption">{{ subOption }}
+            </option>
+          </select>
+        </div>
+        <div v-if="message.options?.type==='text' && idx === messages.length - 1">
+
+        </div>
+        <button class='resetButton' v-if="message.options?.type==='reset' && idx === messages.length - 1"
+                @click="restartChat">
+          {{ message.options.content }}
+        </button>
       </div>
-      <div class="userFormWrapper" v-if="!expertMode">
-        <form @submit.prevent="handleUserInput" id="userForm">
-          <input ref="userInput" id="userInput" type="text" placeholder="Escriba aquí...">
-          <button type="button" @click="handleUserInput">Enviar</button>
-        </form>
-      </div>
-      <expert-mode v-if="expertMode"/>
-      <help-mode v-if="helpMode"/>
-      <button v-if="helpMode" @click="helpMode=false; this.restartChat();">Entendido</button>
-    </section>
+      <div id="spacer" :style="{ height: spacerHeight + 'px' }"></div>
+    </div>
+    <div class="userFormWrapper">
+      <form @submit.prevent="handleUserInput" id="userForm">
+        <input ref="userInput" id="userInput" type="text" placeholder="Escriba aquí...">
+        <button type="button" @click="handleUserInput">Enviar</button>
+      </form>
+    </div>
   </main>
+
 </template>
 
 <script>
 import silbConvo from '../assets/conversation.js';
-import eventBus from '../eventBus.js';
 
-import EsMap from "./messageTypes/esMap.vue";
-import StatusPanel from "./statusPanel.vue";
-import ExpertMode from "./expertMode.vue";
-import HelpMode from "./helpMode.vue";
+
+import EsMap from "./specialMessages/esMap.vue";
+
 
 export default {
-  name: "chat",
-  components: {HelpMode, ExpertMode, EsMap, StatusPanel},
+  name: "chatMode",
+  components: {EsMap},
   data() {
     return {
-      silbAction: 'idle',
       steps: silbConvo.steps,
       step: 0,
       messages: [],
       spacerHeight: 1000,
       isWriting: false,
-      expertMode: false,
-      helpMode: false,
       currentMessage: null
     }
   },
-  watch: {
-    helpMode(newVal) {
-      // this.messages =[];
-      if (newVal) {
-        this.expertMode = false;
-      }
-    },
-    expertMode(newVal) {
-      // this.messages =[];
-      console.log('expertmode', newVal)
-      if (newVal) {
-        this.helpMode = false;
-      }
-    }
-  },
+
   computed: {
     filteredOptions() {
       //TODO => Add functionality so that as the user types, the options in the question are part-matched and offered, with tab to fill.
@@ -133,38 +100,38 @@ export default {
     }
   },
   methods: {
+
     sendMessage(author, message) {
       console.log('Message received:', message);
 
-      if (!message.text || this.helpMode || this.expertMode) {
+      if (!message.text || this.$parent.$data.mode !== 'chat') {
         console.log('No message sent');
         return;
       }
 
       if (author === 'user') {
         if (message.text === 'ayuda') {
-          this.helpMode = true;
+          this.$eventBus.emit('newMode', 'help');
+        } else if (message.text === 'experto') {
+          this.$eventBus.emit('newMode', 'expert');
         }
-        if (!this.helpMode && !this.expertMode) {
-          this.removeOptionButtons();
-          this.$refs.userInput.value = '';
-          this.messages.push({text: message.text, author: author, optionSelected: false});
-          this.$nextTick(() => {
-            eventBus.emit('updateUserAnswers', message);
-            this.adjustSpacerHeight();
-            this.scrollNewMessageIntoView();
-          });
-          window.setTimeout(() => {
-            this.sendMessage('silb', this.steps[this.step]);
-          }, 1000);
-        }
+        this.removeOptionButtons();
+        this.$refs.userInput.value = '';
+        this.messages.push({text: message.text, author: author, optionSelected: false});
+        this.$nextTick(() => {
+          this.$eventBus.emit('updateUserAnswers', message);
+          this.adjustSpacerHeight();
+          this.scrollNewMessageIntoView();
+        });
+        window.setTimeout(() => {
+          this.sendMessage('silb', this.steps[this.step]);
+        }, 1000);
       } else if (author === 'silb') {
         this.handleSilbMessage(message);
       }
     },
-
     handleSilbMessage(message) {
-      this.silbAction = 'talk';
+      this.$eventBus.emit('setSilbAnimation', 'talk');
       this.step++;
       this.messages.push({text: message.text.charAt(0), author: 'silb', optionSelected: false});
       this.$nextTick(() => {
@@ -175,7 +142,7 @@ export default {
       let currentMessage = this.messages[this.messages.length - 1];
       this.isWriting = true;
       let scrollCalled = false;
-
+let millisPerLetter = 20;
       for (let i = 1; i < message.text.length; i++) {
         window.setTimeout(() => {
           currentMessage.text += message.text.charAt(i);
@@ -186,11 +153,10 @@ export default {
           if (i === message.text.length - 1) {
             this.processMessageOptions(message, currentMessage);
           }
-        }, 30 * i);
+        }, millisPerLetter * i);
       }
       this.$refs.userInput?.focus();
     },
-
     processMessageOptions(message, currentMessage) {
       currentMessage.options = {type: message.options.type, content: []};
 
@@ -209,7 +175,7 @@ export default {
                 currentMessage.options.content.push(message.options.content[j]);
               }
               if (j === message.options.content.length - 1) {
-                this.silbAction = 'idle';
+                this.$eventBus.emit('setSilbAnimation', 'idle');
                 this.isWriting = false;
               }
             }, 10 * j);
@@ -232,10 +198,10 @@ export default {
 
         case 'reset':
           console.log('reset message received');
-          eventBus.emit('startNewRun', true);
           currentMessage.options.content = message.options.content;
           this.isWriting = false;
-          this.silbAction = 'idle';
+          this.$eventBus.emit('setSilbAnimation', 'idle');
+          this.$eventBus.emit('runCompleted', '');
           break;
 
         default:
@@ -246,7 +212,7 @@ export default {
     removeOptionButtons() {
       // Implementation to remove option buttons from the last silb message
       const lastMessage = this.messages[this.messages.length - 1];
-      if (lastMessage.author !== 'user') {
+      if (lastMessage.author !== 'user' && lastMessage.options.type !== 'reset') {
         lastMessage.options = null;
       }
     },
@@ -310,6 +276,7 @@ export default {
       message.optionSelected = true;
     },
     restartChat() {
+      this.$eventBus.emit('startNewRun', true);
       this.clearAllMessages();
       this.step = 0;
       this.sendMessage('silb', this.steps[this.step]);
@@ -344,13 +311,9 @@ export default {
 </script>
 
 <style scoped>
-.chatWrapper {
-  display: flex;
-  flex: 4;
-}
 
-section.chatArea {
-  flex-basis: 67%;
+
+.chatArea {
   display: flex;
   justify-content: flex-start;
   flex-direction: column;
@@ -363,6 +326,7 @@ section.chatArea {
       black,
       rgba(0, 0, 0, 0)
   ) 1 100%;
+  max-height: 100%;
 }
 
 div.chatStream {
@@ -375,16 +339,9 @@ div.userFormWrapper {
   display: flex;
   margin-top: 3px;
   box-shadow: 0 0 40px 10px white;
+
 }
 
-section.animationArea {
-  flex-basis: 33%;
-  display: flex;
-  justify-content: center;
-  background: center no-repeat;
-  background-size: contain;
-  position: relative;
-}
 
 .message {
   width: 75%;
@@ -536,54 +493,8 @@ section.animationArea {
 }
 
 
-.hidden {
-  display: none;
-}
-
 #spacer {
   flex-shrink: 0;
-}
-
-.modeControls + label {
-  background-color: #ff4d00;
-  color: black;
-  border-radius: 100px;
-  width: 20px;
-  height: 20px;
-  border: 2px solid yellow;
-  padding: 10px;
-  margin: 5px 0;
-  cursor: pointer;
-  align-items: center;
-  justify-content: center;
-  display: flex;
-  position: absolute;
-  white-space: pre;
-  font-weight: bold;
-  font-size: 1.75em;
-}
-
-input.modeControls:checked + label {
-  background-color: #84ff00;
-  color: black;
-  border-radius: 100px;
-  width: 20px;
-  height: 20px;
-
-}
-
-.modeControls img {
-  height: 30px;
-}
-
-#expertMode + label {
-  right: 0;
-  top: 50px;
-}
-
-#helpMode + label {
-  right: 0;
-  top: 0;
 }
 
 

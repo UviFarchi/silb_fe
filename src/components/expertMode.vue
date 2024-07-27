@@ -1,13 +1,8 @@
 <script>
 import conversation from '../assets/conversation.js';
-import eventBus from '../eventBus.js';
+
 
 export default {
-  computed: {
-    eventBus() {
-      return eventBus;
-    },
-  },
   data() {
     return {
       steps: conversation.steps,
@@ -45,7 +40,7 @@ export default {
       }
     },
     resetForm() {
-      eventBus.emit('startNewRun', true);
+      this.$eventBus.emit('startNewRun', true);
       this.componentKey += 1;
       this.selectedOptions = {};
       this.answers = {};
@@ -60,7 +55,7 @@ export default {
     },
     deselectAll(index) {
       this.selectedOptions = { ...this.selectedOptions, [index]: [] };
-      if (this.defaultDefaults[index] !== undefined) {
+      if (this.defaultAnswers[index] !== undefined) {
         this.saveDefaultAnswers();
       }
     },
@@ -130,9 +125,9 @@ export default {
     emitAnswer(index) {
       const answer = this.answers[index];
       if (Array.isArray(answer)) {
-        answer.forEach((a) => eventBus.emit('updateUserAnswers', { text: a, index }));
+        answer.forEach((a) => this.$eventBus.emit('updateUserAnswers', { text: a, index }));
       } else {
-        eventBus.emit('updateUserAnswers', { text: answer, index });
+        this.$eventBus.emit('updateUserAnswers', { text: answer, index });
       }
     },
     clearDefaults() {
@@ -143,12 +138,13 @@ export default {
 };
 </script>
 <template>
-  <div class="chatStream" :key="componentKey">
+  <div class="expertWrapper" :key="componentKey">
+
     <table class="compactTable">
       <thead>
       <tr>
-        <th class="questionText">Question</th>
-        <th class="answerResponse">Answer</th>
+        <th class="questionText">Paso</th>
+        <th class="answerResponse">Datos</th>
         <th class="defaultCheckbox">
           <img src="../assets/default.png" alt="Default" class="iconImg"/>
           <button @click="clearDefaults" class="resetBtn iconImg">⟳</button>
@@ -274,8 +270,6 @@ select, option, optgroup {
   color: #333;
   font-family: Arial, sans-serif;
   text-align: left;
-  background-color: #f9f9f9;
-  border: 1px solid #ccc;
   border-radius: 3px;
   padding: 5px;
 }
@@ -283,12 +277,6 @@ select, option, optgroup {
 select {
   max-width: 100%;
   appearance: none; /* Remove default styling */
-}
-
-.chatStream {
-  max-width: 100%;
-  margin: 0 auto;
-  padding: 10px;
 }
 
 .compactTable {
@@ -300,7 +288,7 @@ select {
 thead th {
   padding: 10px;
   text-align: left;
-  background-color: #f2f2f2;
+
   width: auto; /* Ensure width can be overridden */
 }
 
@@ -338,7 +326,7 @@ th.defaultCheckbox, td.defaultCheckbox {
   font-size: 12px;
   border: 1px solid #ccc;
   border-radius: 3px;
-  background-color: #f9f9f9;
+
   cursor: pointer;
 }
 
@@ -358,7 +346,7 @@ th.defaultCheckbox, td.defaultCheckbox {
   font-size: 14px;
   border: 1px solid #ccc;
   border-radius: 3px;
-  background-color: #f9f9f9;
+
   cursor: pointer;
 }
 
@@ -391,7 +379,7 @@ th.defaultCheckbox, td.defaultCheckbox {
 .mapPlaceholder {
   width: 100%;
   height: 200px;
-  background-color: #eee;
+
   text-align: center;
   line-height: 200px;
   color: #666;
@@ -408,4 +396,23 @@ th.defaultCheckbox, td.defaultCheckbox {
   width: 50px;
   cursor: pointer; /* Make the icons clickable */
 }
+
+.expertWrapper {
+  overflow-y: auto;
+  height: 500px; /* Adjust this height as needed */
+}
+
+.compactTable thead, .compactTable tbody {
+  display: block;
+}
+
+.compactTable tbody {
+  height: 400px; /* Adjust this height as needed */
+  overflow-y: auto;
+}
+
+.compactTable thead th, .compactTable tbody td {
+  box-sizing: border-box;
+}
+
 </style>
