@@ -1,3 +1,39 @@
+<template>
+  <h1 v-if="bricked">Sólo personal autorizado</h1>
+  <div class="app_wrapper" v-else>
+    <div id="modeCtrl">
+      <input type="radio" id="helpMode" class="modeControls hidden" name="mode" @change="setMode('help')"
+             :checked="mode === 'help'">
+      <label for="helpMode" class="modeControls" title="Modo Ayuda">
+        <img src="./assets/helpMode.png" alt="Modo Ayuda"/></label>
+      <input type="radio" id="expertMode" class="modeControls hidden" name="mode" @change="setMode('expert')"
+             :checked="mode === 'expert'">
+      <label for="expertMode" class="modeControls" title="Modo Experto">
+        <img src="./assets/expert.png" alt="Modo Experto"/>
+      </label>
+      <input type="radio" id="chatMode" class="modeControls hidden" name="mode" @change="setMode('chat')"
+             :checked="mode === 'chat'">
+      <label for="chatMode" class="modeControls" title="Modo Chat">
+        <img src="./assets/chat.png" alt="Modo Chat"/>
+      </label>
+      <!--    TODO =>  Add an option for Public Computer, which will change the localStorage to sessionStorage to avoid data leaks.-->
+    </div>
+    <div class="container">
+      <div ref="leftStage" class="leftStage">
+        <animation-panel ref="animationPanel" id="animationPanel" class="panel"></animation-panel>
+      </div>
+      <div ref="mainStage" class="mainStage">
+        <chat-mode v-if="mode === 'chat'" ref="chatMode" id="chatMode" class="panel scrollable"></chat-mode>
+        <expert-mode v-if="mode === 'expert'" ref="expertMode" id="expertMode" class="panel"></expert-mode>
+        <help-mode v-if="mode === 'help'" ref="helpMode" id="helpMode" class="panel"></help-mode>
+      </div>
+      <div ref="rightStage" class="rightStage">
+        <status-panel ref="statusPanel" id="statusPanel" class="panel"></status-panel>
+      </div>
+    </div>
+  </div>
+
+</template>
 <script>
 import ChatMode from "./components/chatMode.vue";
 import StatusPanel from "./components/statusPanel.vue";
@@ -11,7 +47,8 @@ export default {
   data() {
     return {
       mode: 'chat',
-      bricked: true
+      bricked: true,
+      scrollbarWidth: 0
     }
   },
   mounted() {
@@ -23,15 +60,36 @@ export default {
     this.$eventBus.on('runCompleted', this.startJob);
     this.$eventBus.on('brickApp', this.brickApp);
 
-    let qs = window.location.search;
-    if (qs) {
-      //TODO => Do proper id check, then emit
+    this.scrollbarWidth = this.getScrollbarWidth();
+
+    if (this.checkToken()) {
+
       this.$eventBus.emit('brickApp', false);
     } else {
       this.$eventBus.emit('brickApp', true);
     }
   },
   methods: {
+    getScrollbarWidth() {
+      // Create a div for measuring scrollbar width
+      let scrollDiv = document.createElement("div");
+      // Apply styles to ensure scrollbar visibility
+      scrollDiv.style.width = "100px";
+      scrollDiv.style.height = "100px";
+      scrollDiv.style.overflow = "scroll";
+      scrollDiv.style.position = "absolute";
+      scrollDiv.style.top = "-9999px";
+      scrollDiv.style.visibility = "hidden"; // Hide from view
+      // Append the div to the body
+      document.body.appendChild(scrollDiv);
+      // Calculate the scrollbar width
+      let scrollbarWidth = scrollDiv.offsetWidth - scrollDiv.clientWidth;
+      console.log('scrollbarWidth', this.scrollbarWidth);
+      // Remove the div from the body
+      document.body.removeChild(scrollDiv);
+
+      return scrollbarWidth;
+    },
     updateUserAnswers(newAnswer) {
       this.$refs.statusPanel.handleUserAnswer(newAnswer);
     },
@@ -42,26 +100,36 @@ export default {
       this.$refs.statusPanel.startJob();
     },
     sendNotificationInChat(message) {
-      console.log('send notification event received.');
-      this.$refs.chatMode.sendMessage('silb', {
-        text: message,
-        options: {type: "info"}
-      });
+      if(this.mode === 'chat') {
+        console.log('send notification event received.');
+        this.$refs.chatMode.sendMessage('silb', {
+          text: message,
+          options: {type: "info"}
+        });
+      }
     },
     setMode(newMode) {
       console.log('mode changed to', newMode);
       this.mode = newMode;
-      this.$refs.statusPanel.resetCurrentRun();
+      this.$refs.statusPanel.resetUserAnswers();
       const mainStage = this.$refs.mainStage;
+      const leftStage = this.$refs.leftStage;
+      const rightStage = this.$refs.rightStage;
       switch (newMode) {
         case 'chat':
           mainStage.style.flex = '4 1 0';
+          leftStage.style.flex = '1 1 0';
+          rightStage.style.flex = '2 1 0';
           break;
         case 'help':
-          mainStage.style.flex = '5 1 0';
+          mainStage.style.flex = '4 1 0';
+          leftStage.style.flex = '0 0 0';
+          rightStage.style.flex = '0 0 0'
           break;
         case 'expert':
-          mainStage.style.flex = '6 1 0';
+          mainStage.style.flex = '4 1 0';
+          leftStage.style.flex = '0 0 0';
+          rightStage.style.flex = '2 1 0';
           break;
       }
     },
@@ -70,42 +138,24 @@ export default {
     },
     brickApp(brick) {
       this.bricked = brick
+    },
+    checkToken() {
+      let token = new URL(location.href).searchParams.get('token');
+
+      console.log(token)
+      if (token) {
+        //TODO => Do proper id check on server side, then emit
+        let permittedTokens = [
+          'eyJuYW1lIjoiSm9yZGkgQnJvdG9ucyIsIm9yZyI6IklDQUIifQ==', //Jordi
+          'eyJuYW1lIjoiQWxtb2cgSGl6a3kiLCJvcmciOiJJbnZlc3RtZW50IGluIEJhcmNlbG9uYSJ9', //Almog
+          'eyJuYW1lIjoiUmV1dmVuIEZhcmNoaSIsIm9yZyI6IlNJTEIifQ==' //Uvi
+        ]
+        return permittedTokens.includes(token);
+      }
     }
   }
 }
 </script>
-
-<template>
-  <h1 v-if="bricked">Sólo personal autorizado</h1>
-  <div class="app_wrapper" v-else>
-    <div id="modeCtrl">
-      <input type="radio" id="helpMode" class="modeControls hidden" name="mode" @change="setMode('help')"
-             :checked="mode === 'help'">
-      <label for="helpMode" class="modeControls" title="Modo Ayuda">?</label>
-      <input type="radio" id="expertMode" class="modeControls hidden" name="mode" @change="setMode('expert')"
-             :checked="mode === 'expert'">
-      <label for="expertMode" class="modeControls" title="Modo Experto">
-        <img src="./assets/expert.png" alt="Modo Experto"/>
-      </label>
-      <input type="radio" id="chatMode" class="modeControls hidden" name="mode" @change="setMode('chat')"
-             :checked="mode === 'chat'">
-      <label for="chatMode" class="modeControls" title="Modo Chat">
-        <img src="./assets/chat.png" alt="Modo Chat"/>
-      </label>
-    </div>
-    <div class="container">
-      <animation-panel ref="animationPanel" id="animationPanel" class="panel"></animation-panel>
-      <div ref="mainStage" class="mainStage">
-        <chat-mode v-if="mode === 'chat'" ref="chatMode" id="chatMode" class="mainStage panel scrollable"></chat-mode>
-        <expert-mode v-if="mode === 'expert'" ref="expertMode" id="expertMode" class="mainStage panel"></expert-mode>
-        <help-mode v-if="mode === 'help'" ref="helpMode" id="helpMode" class="mainStage panel"></help-mode>
-      </div>
-      <status-panel ref="statusPanel" id="statusPanel" class="panel"></status-panel>
-    </div>
-  </div>
-
-</template>
-
 <style scoped>
 .app_wrapper {
   display: flex;
@@ -123,7 +173,7 @@ export default {
 }
 
 .modeControls + label {
-  background-color: #ff4d00;
+  background: radial-gradient(gold, palegoldenrod);
   color: black;
   border-radius: 100px;
   width: 20px;
@@ -142,7 +192,7 @@ export default {
 }
 
 input.modeControls:checked + label {
-  background-color: #84ff00;
+  background: gold;
   color: black;
   border-radius: 100px;
   width: 20px;
@@ -185,16 +235,16 @@ input.modeControls:checked + label {
   transition: all 0.5s ease;
 }
 
-#animationPanel {
-  flex: 1 1 0;
-  background-position: center;
-  background-repeat: no-repeat;
-  background-size: contain;
+
+.rightStage {
+  flex: 2 1 0;
+  display: flex;
+  overflow: hidden;
 }
 
-
-#statusPanel {
-  flex: 2 1 0;
+.leftStage {
+  flex: 1 1 0;
+  display: flex;
 }
 
 .mainStage {
@@ -205,18 +255,20 @@ input.modeControls:checked + label {
   flex-direction: column;
 }
 
+
 .scrollable {
   overflow-y: auto;
   flex: 1 1 0;
 }
 
 #modeCtrl {
-  border: 1px solid gold;
+  border: 1px inset white;
   height: 50px;
   width: 160px;
   position: absolute;
-  left: 0;
+  right: 0;
   top: 0;
+  z-index: 100;
 }
 
 

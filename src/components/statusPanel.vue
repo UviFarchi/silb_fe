@@ -61,10 +61,12 @@ export default {
   computed: {
     filteredUserAnswers() {
       // Filter out empty arrays from userAnswers
-      return this.userAnswers.filter(answers => answers.length > 0);
+
+      return this.userAnswers.filter(answers => answers.length > 0).reverse();
     }
   },
   mounted() {
+    //TODO => Persist status panel between mode changes.
     const params = new URLSearchParams(window.location.search);
     const token = params.get('token');
     const decodedTokenString = atob(token);
@@ -72,6 +74,9 @@ export default {
     this.userDetails = JSON.parse(decodedTokenString);
   },
   methods: {
+    resetUserAnswers() {
+      this.userAnswers = [];
+    },
     resetCurrentRun() {
       this.userAnswers[this.userAnswers.length - 1] = [];
     },
@@ -81,7 +86,7 @@ export default {
 
       if (answer?.index < currentAnswers.length) { //Answer has been modified
         console.log(answer.index)
-        currentAnswers[answer.index] = answer.text;
+        currentAnswers[answer.index] += ' | ' + answer.text;
         currentAnswers.length = answer.index + 1;
 
       } else {
@@ -89,7 +94,9 @@ export default {
       }
     },
     startNewRun() {
-      this.userAnswers.push([]);
+      const filteredArray = this.userAnswers.filter(arr => arr.length > 0);
+      filteredArray.push([]);
+      this.userAnswers = filteredArray;
       console.log(this.userAnswers);
       this.currentRunAnswer = [];
     },
@@ -154,6 +161,7 @@ export default {
   overflow-y: hidden;
   position: relative;
   height: 100vh; /* Full height of the viewport */
+  width: 100%;
 }
 
 .jobTable {
@@ -177,7 +185,7 @@ export default {
 }
 
 .jobTable th, .jobTable td {
-  border: 2px solid yellow;
+  border: 2px solid black;
   padding: 8px;
   text-align: left;
 }
@@ -185,6 +193,7 @@ export default {
 .jobTable th:first-child, .jobTable td:first-child {
   width: 90%;
 }
+
 .jobTable th:last-child, .jobTable td:last-child {
   width: 10%;
 }
@@ -207,11 +216,9 @@ export default {
 }
 
 .silbIcon {
-  margin: 0 auto;
-  height: 100px;
-  width: 100px;
-  position: absolute;
-  right: 50px;
+
+  width: 30%;
+
 }
 
 .locked {

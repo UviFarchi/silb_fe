@@ -56,8 +56,10 @@
       </div>
       <div id="spacer" :style="{ height: spacerHeight + 'px' }"></div>
     </div>
+    <button class="restartButton" @click="restartChat">↺</button>
     <div class="userFormWrapper">
       <form @submit.prevent="handleUserInput" id="userForm">
+
         <input ref="userInput" id="userInput" type="text" placeholder="Escriba aquí...">
         <button type="button" @click="handleUserInput">Enviar</button>
       </form>
@@ -114,6 +116,9 @@ export default {
           this.$eventBus.emit('newMode', 'help');
         } else if (message.text === 'experto') {
           this.$eventBus.emit('newMode', 'expert');
+        }
+        else if(message.text === 'inicio'){
+       this.restartChat();
         }
         this.removeOptionButtons();
         this.$refs.userInput.value = '';
@@ -271,7 +276,7 @@ let millisPerLetter = 20;
     },
     submitSelection(message) {
       const selectedValues = message.selectedCheckboxes;
-      this.$refs.userInput.value = selectedValues.join(', '); // Set the selected values to the input field
+      this.$refs.userInput.value = selectedValues.join(' | '); // Set the selected values to the input field
       //this.sendMessage('user', {text: selectedValues});
       message.optionSelected = true;
     },
@@ -306,6 +311,7 @@ let millisPerLetter = 20;
   mounted() {
     console.log('mounted');
     this.sendMessage('silb', this.steps[0]);
+    this.$eventBus.emit('startNewRun', true);
   }
 }
 </script>
@@ -509,5 +515,14 @@ div.userFormWrapper {
   border: 1px solid black;
   margin: 10px;
   font-weight: bold;
+}
+
+.restartButton {
+  width: 50px;
+  position: absolute;
+  top: 0;
+  right: 15px;
+  border: 1px solid yellow;
+  background: lightgray;
 }
 </style>

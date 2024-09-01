@@ -4,7 +4,10 @@ export default {
 
     steps: [
         {
-            "text": "Hola, soy Silb.io, el robot que se pone en la cola para hacer cita en la administración pública por tí.\nSi en cualquier momento tienes dudas escribe 'ayuda', y te explicaré como usarme, o presiona el botón de ayuda aquí arriba.",
+            "text": "Hola, soy Silb.io, el robot que se pone en la cola para hacer cita en la administración pública por tí.<br/>" +
+                "Si necesitas que te explique cómo usarme, escribe 'ayuda' o presiona el botón (?).<br/>" +
+                "Para volver a comenzar la conversación, escribe 'inicio' o presiona el botón (↺).<br/>"+
+                "Comencemos.",
             "short": "Hola",
             "options": {"type": "info"}
         },
@@ -33,11 +36,7 @@ export default {
             "short": "Oficinas",
             "options": {
                 "type": "checkbox",
-                "content": references.procedures.extranjeria.barcelona.addresses.filter((address) => {
-                    if (Math.random() < 0.75) {
-                        return address
-                    }
-                })
+                "content": references.procedures.extranjeria.barcelona.addresses
             }
         },
         {
