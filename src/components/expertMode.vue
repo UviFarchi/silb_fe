@@ -24,7 +24,7 @@
           v-show="isVisible(index)"
       >
         <td class="questionCell">{{ step.short || step.text }}</td>
-        <td class="answerCell" >
+        <td class="answerCell">
           <div v-if="step.options.type === 'buttons'" class="btnGroup">
             <select @change="recordAnswer($event.target, $event.target.value, index)" v-model="selectedAnswers[index]">
               <option disabled value="">elija uno</option>
@@ -42,7 +42,6 @@
                 class="textInput"
                 placeholder="elija uno"
                 v-model="selectedAnswers[index]"
-                :ref="'text'+index"
             />
           </div>
           <div v-if="step.options.type === 'checkbox'" class="checkboxesWrapper">
@@ -102,19 +101,31 @@
         </td>
         <td class="okCell">
           <button v-if="defaultAnswers[index]!==undefined && step.options.type !== 'checkbox' && !answers[index]"
+                  class="okBtn"
                   @click="recordAnswer($event.target, defaultAnswers[index], index)">OK
           </button>
           <button
               v-else-if="step.options.type==='text' && !answers[index]"
-              :disabled="!$refs['text'+index] || $refs['text'+index].value === ''"
+              class="okBtn"
+              :disabled="!selectedAnswers[index]"
               @click="recordAnswer($event.target, selectedAnswers[index], index)">OK
-          </button>        <button
+          </button>
+          <button
               v-else-if=" step.options.type === 'checkbox' && !answers[index]"
-              @click="recordAnswer($event.target, selectedAnswers[index], index)">OK          </button>
+              class="okBtn"
+              @click="recordAnswer($event.target, selectedAnswers[index], index)">OK
+          </button>
         </td>
       </tr>
       </tbody>
     </table>
+    <div v-if="showConfirmModal" class="modal">
+      <div class="modal-content">
+        <p>¿Estás seguro de que deseas restablecer todas las respuestas predeterminadas?</p>
+        <button @click="confirmClearDefaults(true)">Aceptar</button>
+        <button @click="confirmClearDefaults(false)">Cancelar</button>
+      </div>
+    </div>
   </div>
 </template>
 <script>
@@ -168,6 +179,7 @@ export default {
       this.selectedAnswers = {};
       this.answers = {};
       this.visibleIndexes = [];
+      this.loadDefaultAnswers();
     },
     handleDefault() {
     },
@@ -254,9 +266,12 @@ export default {
       }
     },
     clearDefaults() {
-      this.defaultAnswers = {};
-      this.saveDefaultAnswers();
-    },
+      const confirmed = window.confirm("¿Estás seguro de que deseas restablecer todas las respuestas predeterminadas?");
+      if (confirmed) {
+        this.defaultAnswers = {};
+        this.saveDefaultAnswers();
+      }
+    }
   },
 };
 </script>
@@ -382,7 +397,7 @@ select {
 }
 
 .checkboxesWrapper {
-  height: 150px;
+  height: 300px;
   overflow-y: auto;
   position: relative;
 }
@@ -400,5 +415,14 @@ select {
 .answered {
   color: grey;
   background: lightgrey;
+}
+
+.okBtn {
+  border: 2px solid yellow;
+}
+
+.okBtn:disabled {
+  border: 2px solid black;
+  background: grey;
 }
 </style>
