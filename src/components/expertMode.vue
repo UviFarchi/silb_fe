@@ -129,7 +129,7 @@
   </div>
 </template>
 <script>
-import conversation from '../assets/conversation.js';
+import conversation from '../assets/conversations/demo.js';
 
 
 export default {
@@ -231,7 +231,7 @@ export default {
         this.saveDefaultAnswers();
       }
 
-      this.emitAnswer(index);
+     // this.emitAnswer(index);
     },
     toggleDefault(index, event) {
       if (event.target.checked) {
@@ -276,10 +276,9 @@ export default {
 };
 </script>
 <style scoped>
-
 * {
   box-sizing: border-box;
-  color: #333;
+  color: var(--text-color);
   font-family: Arial, sans-serif;
   font-size: 14px;
   text-align: left;
@@ -290,41 +289,26 @@ export default {
   overflow-y: scroll;
 }
 
-
-/* styles.css */
 table {
   width: 100%;
-}
-
-thead, tbody {
-
 }
 
 thead {
   position: sticky;
   top: 0;
-  background: lightgoldenrodyellow;
-}
-
-tr {
-
+  background: var(--background-color-light);
+  color: var(--primary-color-dark);
 }
 
 th, td {
-  border: 1px dotted dimgrey;
+  border: 1px dotted var(--border-color);
   border-collapse: collapse;
   margin: 0;
 }
 
-
-tbody {
-
-}
-
-
 select, option, optgroup {
   border-radius: 3px;
-  color: #333;
+  color: var(--text-color);
   font-family: Arial, sans-serif;
   font-size: 14px;
   padding: 5px;
@@ -337,7 +321,9 @@ select {
 }
 
 .resetBtn {
-  border: 1px solid #ccc;
+  background-color: var(--button-bg-color);
+  color: var(--text-color);
+  border: 1px solid var(--button-bg-dark);
   border-radius: 3px;
   cursor: pointer;
   display: block;
@@ -347,16 +333,16 @@ select {
 }
 
 .resetBtn:hover {
-  background-color: #e9e9e9;
-}
+  background-color: var(--button-hover-bg-color);
+  color: var(--text-color-light);}
 
 .btnGroup {
   display: flex;
   flex-wrap: wrap;
 }
 
-.btn, .textInput, .dropdown {
-  border: 1px solid #ccc;
+option{
+
   border-radius: 3px;
   cursor: pointer;
   display: block;
@@ -366,7 +352,8 @@ select {
 }
 
 .btn:hover {
-  background-color: #e9e9e9;
+  background-color: var(--button-hover-bg-color);
+  color: var(--text-color-light);
 }
 
 .textInput, .dropdown {
@@ -388,8 +375,8 @@ select {
 }
 
 .mapPlaceholder {
-  border: 1px solid #ccc;
-  color: #666;
+  border: 1px solid var(--border-color);
+  color: var(--text-color-light);
   height: 200px;
   line-height: 200px;
   text-align: center;
@@ -413,16 +400,18 @@ select {
 }
 
 .answered {
-  color: grey;
-  background: lightgrey;
+  color: var(--text-color-light);
+  background: var(--background-color-dark);
 }
 
 .okBtn {
-  border: 2px solid yellow;
+  background-color: var(--button-bg-color);
+  color: var(--text-color);
+  border: 1px solid var(--button-bg-dark);
 }
 
 .okBtn:disabled {
-  border: 2px solid black;
-  background: grey;
+  border: 2px solid var(--text-color);
+  background: var(--text-color-light);
 }
 </style>

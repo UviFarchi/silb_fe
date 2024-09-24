@@ -9,254 +9,255 @@ export default {
         "esjs1": {
           "hover": "A CORUÑA", "url": "A coruña",//link to any webpage
           "target": "none",// use "new_window", "same_window", "modal", or "none"
-          "upColor": "#FFFFF3",//default color
-          "overColor": "#FAF67A",//highlight color
-          "downColor": "#F5F06B",//clicking color
+          "upColor": "var(--primary-color-lightest)",//default color
+          "overColor": "var(--primary-color)",//highlight color
+          "downColor": "var(--primary-color-darkest)",//clicking color
           "active": true//true/false to activate/deactivate
         },
         "esjs2": {
           "hover": "ÁLAVA", "url": "Álava", "target": "none",
-          "upColor": "#FFFFF3", "overColor": "#FAF67A", "downColor": "#F5F06B",
+          "upColor": "var(--primary-color-lightest)", "overColor": "var(--primary-color)", "downColor": "var(--primary-color-darkest)",
           "active": true
         },
         "esjs3": {
           "hover": "ALBACETE", "url": "Albacete", "target": "none",
-          "upColor": "#FFFFF3", "overColor": "#FAF67A", "downColor": "#F5F06B",
+          "upColor": "var(--primary-color-lightest)", "overColor": "var(--primary-color)", "downColor": "var(--primary-color-darkest)",
           "active": true
         },
         "esjs4": {
           "hover": "ALICANTE", "url": "Alicante", "target": "none",
-          "upColor": "#FFFFF3", "overColor": "#FAF67A", "downColor": "#F5F06B",
+          "upColor": "var(--primary-color-lightest)", "overColor": "var(--primary-color)", "downColor": "var(--primary-color-darkest)",
           "active": true
         },
         "esjs5": {
           "hover": "ALMERÍA", "url": "Almería", "target": "none",
-          "upColor": "#FFFFF3", "overColor": "#FAF67A", "downColor": "#F5F06B",
+          "upColor": "var(--primary-color-lightest)", "overColor": "var(--primary-color)", "downColor": "var(--primary-color-darkest)",
           "active": true
         },
         "esjs6": {
           "hover": "ASTURIAS", "url": "Asturias", "target": "none",
-          "upColor": "#FFFFF3", "overColor": "#FAF67A", "downColor": "#F5F06B",
+          "upColor": "var(--primary-color-lightest)", "overColor": "var(--primary-color)", "downColor": "var(--primary-color-darkest)",
           "active": true
         },
         "esjs7": {
           "hover": "ÁVILA", "url": "Ávila", "target": "none",
-          "upColor": "#FFFFF3", "overColor": "#FAF67A", "downColor": "#F5F06B",
+          "upColor": "var(--primary-color-lightest)", "overColor": "var(--primary-color)", "downColor": "var(--primary-color-darkest)",
           "active": true
         },
         "esjs8": {
           "hover": "BADAJOZ", "url": "Badajoz", "target": "none",
-          "upColor": "#FFFFF3", "overColor": "#FAF67A", "downColor": "#F5F06B",
+          "upColor": "var(--primary-color-lightest)", "overColor": "var(--primary-color)", "downColor": "var(--primary-color-darkest)",
           "active": true
         },
         "esjs9": {
           "hover": "BALEARIC ISLANDS", "url": "Balearic islands", "target": "none",
-          "upColor": "#FFFFF3", "overColor": "#FAF67A", "downColor": "#F5F06B",
+          "upColor": "var(--primary-color-lightest)", "overColor": "var(--primary-color)", "downColor": "var(--primary-color-darkest)",
           "active": true
         },
         "esjs10": {
           "hover": "BARCELONA", "url": "Barcelona", "target": "none",
-          "upColor": "#D0C506", "overColor": "#FAF67A", "downColor": "#F5F06B",
+          "upColor": "var(--primary-color-light)",
+          "overColor": "var(--primary-color)", "downColor": "var(--primary-color-darkest)",
           "active": true
         },
         "esjs11": {
           "hover": "VIZCAYA", "url": "Vizcaya", "target": "none",
-          "upColor": "#FFFFF3", "overColor": "#FAF67A", "downColor": "#F5F06B",
+          "upColor": "var(--primary-color-lightest)", "overColor": "var(--primary-color)", "downColor": "var(--primary-color-darkest)",
           "active": true
         },
         "esjs12": {
           "hover": "BURGOS", "url": "Burgos", "target": "none",
-          "upColor": "#FFFFF3", "overColor": "#FAF67A", "downColor": "#F5F06B",
+          "upColor": "var(--primary-color-lightest)", "overColor": "var(--primary-color)", "downColor": "var(--primary-color-darkest)",
           "active": true
         },
         "esjs13": {
           "hover": "CÁCERES", "url": "Cáceres", "target": "none",
-          "upColor": "#FFFFF3", "overColor": "#FAF67A", "downColor": "#F5F06B",
+          "upColor": "var(--primary-color-lightest)", "overColor": "var(--primary-color)", "downColor": "var(--primary-color-darkest)",
           "active": true
         },
         "esjs14": {
           "hover": "CÁDIZ", "url": "Cádiz", "target": "none",
-          "upColor": "#FFFFF3", "overColor": "#FAF67A", "downColor": "#F5F06B",
+          "upColor": "var(--primary-color-lightest)", "overColor": "var(--primary-color)", "downColor": "var(--primary-color-darkest)",
           "active": true
         },
         "esjs15": {
           "hover": "CANTABRIA", "url": "Cantabria", "target": "none",
-          "upColor": "#FFFFF3", "overColor": "#FAF67A", "downColor": "#F5F06B",
+          "upColor": "var(--primary-color-lightest)", "overColor": "var(--primary-color)", "downColor": "var(--primary-color-darkest)",
           "active": true
         },
         "esjs16": {
           "hover": "CASTELLÓN", "url": "Castellón", "target": "none",
-          "upColor": "#FFFFF3", "overColor": "#FAF67A", "downColor": "#F5F06B",
+          "upColor": "var(--primary-color-lightest)", "overColor": "var(--primary-color)", "downColor": "var(--primary-color-darkest)",
           "active": true
         },
         "esjs17": {
           "hover": "CIUDAD REAL", "url": "Ciudad real", "target": "none",
-          "upColor": "#FFFFF3", "overColor": "#FAF67A", "downColor": "#F5F06B",
+          "upColor": "var(--primary-color-lightest)", "overColor": "var(--primary-color)", "downColor": "var(--primary-color-darkest)",
           "active": true
         },
         "esjs18": {
           "hover": "CÓRDOBA", "url": "Córdoba", "target": "none",
-          "upColor": "#FFFFF3", "overColor": "#FAF67A", "downColor": "#F5F06B",
+          "upColor": "var(--primary-color-lightest)", "overColor": "var(--primary-color)", "downColor": "var(--primary-color-darkest)",
           "active": true
         },
         "esjs19": {
           "hover": "CUENCA", "url": "Cuenca", "target": "none",
-          "upColor": "#FFFFF3", "overColor": "#FAF67A", "downColor": "#F5F06B",
+          "upColor": "var(--primary-color-lightest)", "overColor": "var(--primary-color)", "downColor": "var(--primary-color-darkest)",
           "active": true
         },
         "esjs20": {
           "hover": "GIPUZKOA", "url": "Gipuzkoa", "target": "none",
-          "upColor": "#FFFFF3", "overColor": "#FAF67A", "downColor": "#F5F06B",
+          "upColor": "var(--primary-color-lightest)", "overColor": "var(--primary-color)", "downColor": "var(--primary-color-darkest)",
           "active": true
         },
         "esjs21": {
           "hover": "GIRONA", "url": "Girona", "target": "none",
-          "upColor": "#FFFFF3", "overColor": "#FAF67A", "downColor": "#F5F06B",
+          "upColor": "var(--primary-color-lightest)", "overColor": "var(--primary-color)", "downColor": "var(--primary-color-darkest)",
           "active": true
         },
         "esjs22": {
           "hover": "GRANADA", "url": "Granada", "target": "none",
-          "upColor": "#FFFFF3", "overColor": "#FAF67A", "downColor": "#F5F06B",
+          "upColor": "var(--primary-color-lightest)", "overColor": "var(--primary-color)", "downColor": "var(--primary-color-darkest)",
           "active": true
         },
         "esjs23": {
           "hover": "GUADALAJARA", "url": "Guadalajara", "target": "none",
-          "upColor": "#FFFFF3", "overColor": "#FAF67A", "downColor": "#F5F06B",
+          "upColor": "var(--primary-color-lightest)", "overColor": "var(--primary-color)", "downColor": "var(--primary-color-darkest)",
           "active": true
         },
         "esjs24": {
           "hover": "HUELVA", "url": "Huelva", "target": "none",
-          "upColor": "#FFFFF3", "overColor": "#FAF67A", "downColor": "#F5F06B",
+          "upColor": "var(--primary-color-lightest)", "overColor": "var(--primary-color)", "downColor": "var(--primary-color-darkest)",
           "active": true
         },
         "esjs25": {
           "hover": "HUESCA", "url": "Huesca", "target": "none",
-          "upColor": "#FFFFF3", "overColor": "#FAF67A", "downColor": "#F5F06B",
+          "upColor": "var(--primary-color-lightest)", "overColor": "var(--primary-color)", "downColor": "var(--primary-color-darkest)",
           "active": true
         },
         "esjs26": {
           "hover": "JAÉN", "url": "Jaén", "target": "none",
-          "upColor": "#FFFFF3", "overColor": "#FAF67A", "downColor": "#F5F06B",
+          "upColor": "var(--primary-color-lightest)", "overColor": "var(--primary-color)", "downColor": "var(--primary-color-darkest)",
           "active": true
         },
         "esjs27": {
           "hover": "LA RIOJA", "url": "La rioja", "target": "none",
-          "upColor": "#FFFFF3", "overColor": "#FAF67A", "downColor": "#F5F06B",
+          "upColor": "var(--primary-color-lightest)", "overColor": "var(--primary-color)", "downColor": "var(--primary-color-darkest)",
           "active": true
         },
         "esjs28": {
           "hover": "LAS PALMAS", "url": "Las palmas", "target": "none",
-          "upColor": "#FFFFF3", "overColor": "#FAF67A", "downColor": "#F5F06B",
+          "upColor": "var(--primary-color-lightest)", "overColor": "var(--primary-color)", "downColor": "var(--primary-color-darkest)",
           "active": true
         },
         "esjs29": {
           "hover": "LEÓN", "url": "León", "target": "none",
-          "upColor": "#FFFFF3", "overColor": "#FAF67A", "downColor": "#F5F06B",
+          "upColor": "var(--primary-color-lightest)", "overColor": "var(--primary-color)", "downColor": "var(--primary-color-darkest)",
           "active": true
         },
         "esjs30": {
           "hover": "LLEIDA", "url": "Lleida", "target": "none",
-          "upColor": "#FFFFF3", "overColor": "#FAF67A", "downColor": "#F5F06B",
+          "upColor": "var(--primary-color-lightest)", "overColor": "var(--primary-color)", "downColor": "var(--primary-color-darkest)",
           "active": true
         },
         "esjs31": {
           "hover": "LUGO", "url": "Lugo", "target": "none",
-          "upColor": "#FFFFF3", "overColor": "#FAF67A", "downColor": "#F5F06B",
+          "upColor": "var(--primary-color-lightest)", "overColor": "var(--primary-color)", "downColor": "var(--primary-color-darkest)",
           "active": true
         },
         "esjs32": {
           "hover": "MADRID", "url": "Madrid", "target": "none",
-          "upColor": "#FFFFF3", "overColor": "#FAF67A", "downColor": "#F5F06B",
+          "upColor": "var(--primary-color-lightest)", "overColor": "var(--primary-color)", "downColor": "var(--primary-color-darkest)",
           "active": true
         },
         "esjs33": {
           "hover": "MÁLAGA", "url": "Málaga", "target": "none",
-          "upColor": "#FFFFF3", "overColor": "#FAF67A", "downColor": "#F5F06B",
+          "upColor": "var(--primary-color-lightest)", "overColor": "var(--primary-color)", "downColor": "var(--primary-color-darkest)",
           "active": true
         },
         "esjs34": {
           "hover": "MURCIA", "url": "Murcia", "target": "none",
-          "upColor": "#FFFFF3", "overColor": "#FAF67A", "downColor": "#F5F06B",
+          "upColor": "var(--primary-color-lightest)", "overColor": "var(--primary-color)", "downColor": "var(--primary-color-darkest)",
           "active": true
         },
         "esjs35": {
           "hover": "NAVARRA", "url": "Navarra", "target": "none",
-          "upColor": "#FFFFF3", "overColor": "#FAF67A", "downColor": "#F5F06B",
+          "upColor": "var(--primary-color-lightest)", "overColor": "var(--primary-color)", "downColor": "var(--primary-color-darkest)",
           "active": true
         },
         "esjs36": {
           "hover": "OURENSE", "url": "Ourense", "target": "none",
-          "upColor": "#FFFFF3", "overColor": "#FAF67A", "downColor": "#F5F06B",
+          "upColor": "var(--primary-color-lightest)", "overColor": "var(--primary-color)", "downColor": "var(--primary-color-darkest)",
           "active": true
         },
         "esjs37": {
           "hover": "PALENCIA", "url": "Palencia", "target": "none",
-          "upColor": "#FFFFF3", "overColor": "#FAF67A", "downColor": "#F5F06B",
+          "upColor": "var(--primary-color-lightest)", "overColor": "var(--primary-color)", "downColor": "var(--primary-color-darkest)",
           "active": true
         },
         "esjs38": {
           "hover": "PONTEVEDRA", "url": "Pontevedra", "target": "none",
-          "upColor": "#FFFFF3", "overColor": "#FAF67A", "downColor": "#F5F06B",
+          "upColor": "var(--primary-color-lightest)", "overColor": "var(--primary-color)", "downColor": "var(--primary-color-darkest)",
           "active": true
         },
         "esjs39": {
           "hover": "SALAMANCA", "url": "Salamanca", "target": "none",
-          "upColor": "#FFFFF3", "overColor": "#FAF67A", "downColor": "#F5F06B",
+          "upColor": "var(--primary-color-lightest)", "overColor": "var(--primary-color)", "downColor": "var(--primary-color-darkest)",
           "active": true
         },
         "esjs40": {
           "hover": "SANTA CRUZ DE TENERIFE", "url": "Santa cruz de tenerife", "target": "none",
-          "upColor": "#FFFFF3", "overColor": "#FAF67A", "downColor": "#F5F06B",
+          "upColor": "var(--primary-color-lightest)", "overColor": "var(--primary-color)", "downColor": "var(--primary-color-darkest)",
           "active": true
         },
         "esjs41": {
           "hover": "SEGOVIA", "url": "Segovia", "target": "none",
-          "upColor": "#FFFFF3", "overColor": "#FAF67A", "downColor": "#F5F06B",
+          "upColor": "var(--primary-color-lightest)", "overColor": "var(--primary-color)", "downColor": "var(--primary-color-darkest)",
           "active": true
         },
         "esjs42": {
           "hover": "SEVILLA", "url": "Sevilla", "target": "none",
-          "upColor": "#FFFFF3", "overColor": "#FAF67A", "downColor": "#F5F06B",
+          "upColor": "var(--primary-color-lightest)", "overColor": "var(--primary-color)", "downColor": "var(--primary-color-darkest)",
           "active": true
         },
         "esjs43": {
           "hover": "SORIA", "url": "Soria", "target": "none",
-          "upColor": "#FFFFF3", "overColor": "#FAF67A", "downColor": "#F5F06B",
+          "upColor": "var(--primary-color-lightest)", "overColor": "var(--primary-color)", "downColor": "var(--primary-color-darkest)",
           "active": true
         },
         "esjs44": {
           "hover": "TARRAGONA", "url": "Tarragona", "target": "none",
-          "upColor": "#FFFFF3", "overColor": "#FAF67A", "downColor": "#F5F06B",
+          "upColor": "var(--primary-color-lightest)", "overColor": "var(--primary-color)", "downColor": "var(--primary-color-darkest)",
           "active": true
         },
         "esjs45": {
           "hover": "TERUEL", "url": "Teruel", "target": "none",
-          "upColor": "#FFFFF3", "overColor": "#FAF67A", "downColor": "#F5F06B",
+          "upColor": "var(--primary-color-lightest)", "overColor": "var(--primary-color)", "downColor": "var(--primary-color-darkest)",
           "active": true
         },
         "esjs46": {
           "hover": "TOLEDO", "url": "Toledo", "target": "none",
-          "upColor": "#FFFFF3", "overColor": "#FAF67A", "downColor": "#F5F06B",
+          "upColor": "var(--primary-color-lightest)", "overColor": "var(--primary-color)", "downColor": "var(--primary-color-darkest)",
           "active": true
         },
         "esjs47": {
           "hover": "VALENCIA", "url": "Valencia", "target": "none",
-          "upColor": "#FFFFF3", "overColor": "#FAF67A", "downColor": "#F5F06B",
+          "upColor": "var(--primary-color-lightest)", "overColor": "var(--primary-color)", "downColor": "var(--primary-color-darkest)",
           "active": true
         },
         "esjs48": {
           "hover": "VALLADOLID", "url": "Valladolid", "target": "none",
-          "upColor": "#FFFFF3", "overColor": "#FAF67A", "downColor": "#F5F06B",
+          "upColor": "var(--primary-color-lightest)", "overColor": "var(--primary-color)", "downColor": "var(--primary-color-darkest)",
           "active": true
         },
         "esjs49": {
           "hover": "ZAMORA", "url": "Zamora", "target": "none",
-          "upColor": "#FFFFF3", "overColor": "#FAF67A", "downColor": "#F5F06B",
+          "upColor": "var(--primary-color-lightest)", "overColor": "var(--primary-color)", "downColor": "var(--primary-color-darkest)",
           "active": true
         },
         "esjs50": {
           "hover": "ZARAGOZA", "url": "Zaragoza", "target": "none",
-          "upColor": "#FFFFF3", "overColor": "#FAF67A", "downColor": "#F5F06B",
+          "upColor": "var(--primary-color-lightest)", "overColor": "var(--primary-color)", "downColor": "var(--primary-color-darkest)",
           "active": true
         },
         "general": {

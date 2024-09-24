@@ -1,7 +1,7 @@
 <template>
   <main class="statusPanel">
     <h1>SILB.io</h1>
-    <img class="silbIcon" src="../assets/silb_icon.png" alt="Stand In Line Bot"/>
+    <img class="silbIcon" src="../assets/icons/silb_icon.png" alt="Stand In Line Bot"/>
     <h2>Stand In Line Bot</h2>
     <h3>Usuario</h3>
     <table id="userDetails">
@@ -166,7 +166,7 @@ export default {
 
 .jobTable {
   margin: 5px;
-  border: 1px solid gold;
+  border: 1px solid var(--border-color);
   flex-grow: 1; /* Allow jobTable to grow and shrink */
   overflow: hidden; /* Prevent overflow outside of the container */
   display: flex;
@@ -185,7 +185,7 @@ export default {
 }
 
 .jobTable th, .jobTable td {
-  border: 2px solid black;
+  border: 2px solid var(--border-color);
   padding: 8px;
   text-align: left;
 }
@@ -199,40 +199,34 @@ export default {
 }
 
 .jobTable th {
-  background-color: yellow;
-  color: black;
-}
+  background-color: var(--background-color-light);
+  color: var(--secondary-color);}
 
 .answersTable {
-  background: #cbcbcb;
-  color: black;
+  background: var(--background-color);
+  color: var(--text-color);
   border-collapse: collapse;
 }
 
 .answersTable td {
-  border: 1px solid yellow;
+  border: 1px solid var(--border-color);
   padding: 5px;
   margin: 5px;
 }
 
 .silbIcon {
-
   width: 30%;
-
 }
 
 .locked {
-  border: 3px solid black;
+  border: 3px solid var(--border-color);
 }
 
 #userDetails {
   text-align: left;
 }
 
-h1, h2, h3 {
-  color: gold;
-  text-shadow: 1px 1px #1a1a1a;
-}
+
 
 h1, h2 {
   margin: 0 10px;
@@ -241,9 +235,8 @@ h1, h2 {
 
 h3 {
   padding-top: 10px;
-  border-top: 1px solid gold;
+  border-top: 1px solid var(--border-color);
   width: 100%;
   margin-bottom: 5px;
 }
-
 </style>

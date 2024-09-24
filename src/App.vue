@@ -5,22 +5,22 @@
       <input type="radio" id="helpMode" class="modeControls hidden" name="mode" @change="setMode('help')"
              :checked="mode === 'help'">
       <label for="helpMode" class="modeControls" title="Modo Ayuda">
-        <img src="./assets/helpMode.png" alt="Modo Ayuda"/></label>
+        <img src="./assets/icons/helpMode.png" alt="Modo Ayuda"/></label>
       <input type="radio" id="expertMode" class="modeControls hidden" name="mode" @change="setMode('expert')"
              :checked="mode === 'expert'">
       <label for="expertMode" class="modeControls" title="Modo Experto">
-        <img src="./assets/expert.png" alt="Modo Experto"/>
+        <img src="./assets/icons/expert.png" alt="Modo Experto"/>
       </label>
       <input type="radio" id="chatMode" class="modeControls hidden" name="mode" @change="setMode('chat')"
              :checked="mode === 'chat'">
       <label for="chatMode" class="modeControls" title="Modo Chat">
-        <img src="./assets/chat.png" alt="Modo Chat"/>
+        <img src="./assets/icons/chat.png" alt="Modo Chat"/>
       </label>
       <!--    TODO =>  Add an option for Public Computer, which will change the localStorage to sessionStorage to avoid data leaks.-->
     </div>
     <div class="container">
       <div ref="leftStage" class="leftStage">
-        <animation-panel ref="animationPanel" id="animationPanel" class="panel"></animation-panel>
+        <animation-panel ref="animationPanel" id="animationPanel" class="panel" v-if="mode==='chat'"></animation-panel>
       </div>
       <div ref="mainStage" class="mainStage">
         <chat-mode v-if="mode === 'chat'" ref="chatMode" id="chatMode" class="panel scrollable"></chat-mode>
@@ -56,7 +56,7 @@ export default {
     this.$eventBus.on('startNewRun', this.startNewRun);
     this.$eventBus.on('newNotification', this.sendNotificationInChat);
     this.$eventBus.on('newMode', this.setMode);
-    this.$eventBus.on('setSilbAnimation', this.setSilbAction);
+    this.$eventBus.on('setSilbAction', this.setSilbAction);
     this.$eventBus.on('runCompleted', this.startJob);
     this.$eventBus.on('brickApp', this.brickApp);
 
@@ -134,7 +134,9 @@ export default {
       }
     },
     setSilbAction(newAction) {
-      this.$refs.animationPanel.setSilbAction(newAction);
+      if(this.mode==='chat') {
+        this.$refs.animationPanel.setSilbAction(newAction);
+      }
     },
     brickApp(brick) {
       this.bricked = brick
@@ -169,16 +171,16 @@ export default {
   height: 100vh;
   max-height: 100vh;
   overflow: hidden;
-  background: lightgoldenrodyellow;
+  background: var(--background-color-light);
 }
 
 .modeControls + label {
-  background: radial-gradient(gold, palegoldenrod);
-  color: black;
+  background: radial-gradient(var(--primary-color), var(--background-color-light));
+  color: var(--text-color);
   border-radius: 100px;
   width: 20px;
   height: 20px;
-  border: 2px solid yellow;
+  border: 2px solid var(--primary-color-dark);
   padding: 10px;
   margin: 5px 0;
   cursor: pointer;
@@ -192,8 +194,8 @@ export default {
 }
 
 input.modeControls:checked + label {
-  background: gold;
-  color: black;
+  background: var(--primary-color);
+  color: var(--text-color);
   border-radius: 100px;
   width: 20px;
   height: 20px;
@@ -218,7 +220,6 @@ input.modeControls:checked + label {
   top: 0;
 }
 
-
 .hidden {
   display: none;
 }
@@ -234,7 +235,6 @@ input.modeControls:checked + label {
 .container > * {
   transition: all 0.5s ease;
 }
-
 
 .rightStage {
   flex: 2 1 0;
@@ -255,14 +255,13 @@ input.modeControls:checked + label {
   flex-direction: column;
 }
 
-
 .scrollable {
   overflow-y: auto;
   flex: 1 1 0;
 }
 
 #modeCtrl {
-  border: 1px inset white;
+  border: 1px inset var(--background-color-light);
   height: 50px;
   width: 160px;
   position: absolute;
@@ -271,6 +270,4 @@ input.modeControls:checked + label {
   z-index: 100;
 }
 
-
 </style>
-

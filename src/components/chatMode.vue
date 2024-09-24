@@ -1,5 +1,5 @@
 <template>
-  <main ref="chatArea" class="chatArea" @keydown.enter="handleUserInput">
+  <main ref="chatArea" class="chatArea">
     <div ref="chatStream" class="chatStream">
       <div v-for="(message, idx) in messages" :key="message.text" class="message"
            :class="{ 'messageUser': message.author === 'user', 'messageSilb': message.author !== 'user' }"
@@ -9,18 +9,19 @@
         <es-map v-if="message.options?.type==='map' && idx === messages.length - 1"></es-map>
 
         <div class="optionButtonsContainer">
-          <button v-if="message.options?.type==='buttons'" v-for="(option, index) in message.options.content"
-                  :key="index" class="optionButtons" :style="'background:'+ this.assignColor(index)"
-                  @click="(e)=>{setInputValue(option)}">{{ option }}
+          <button v-if="message.options?.type==='buttons'"
+                  v-for="(option, index) in message.options.content"
+                  :key="index"
+                  class="optionButtons"
+                  :style="assignColor(index)"
+                  @click="(e)=>{setInputValue(option)}">
+            {{ option }}
           </button>
         </div>
         <div v-if="message.options?.type==='checkbox' && idx === messages.length - 1" class="checkboxContainer">
           <div id="checkboxCrtlContainer">
-            <button @click="selectAll(message)" title="Seleccionar Todas"><img src="../assets/select_all.png"
-                                                                               alt="Seleccionar Todas"/></button>
-            <button @click="deselectAll(message)" title="No Seleccionar Ninguna"><img src="../assets/select_none.png"
-                                                                                      alt="No Seleccionar Ninguna"/>
-            </button>
+            <button @click="selectAll(message)" title="Seleccionar Todas">Seleccionar Todas</button>
+            <button @click="deselectAll(message)" title="No Seleccionar Ninguna">No Seleccionar Ninguna</button>
             <button @click="submitSelection(message)" title="Confirmar Selección">OK</button>
           </div>
           <div v-for="(option, index) in message.options.content" :key="index" class="checkboxPair">
@@ -31,7 +32,7 @@
         </div>
         <div v-if="message.options?.type==='dropdown'" class="dropdownWrapper">
           <select v-model="message.selectedOption" @change="handleOptionSelection($event, message)" class="dropdown">
-            <option disabled value="">Select an option</option>
+            <option disabled :value="message.title" >{{ message.title }}</option>
             <option v-for="option in message.options.content" :key="option.text" :value="option.text">{{
                 option.text
               }}
@@ -39,7 +40,7 @@
           </select>
           <select v-if="message.selectedOption" v-model="message.selectedSubOption"
                   @change="handleSubOptionSelection($event, message)" class="dropdown">
-            <option disabled value="">Select a sub-option</option>
+            <option disabled :value="message.subtitle" >{{ message.subtitle }}</option>
             <option
                 v-for="subOption in message.options.content.find(opt => opt.text === message.selectedOption)?.options"
                 :key="subOption" :value="subOption">{{ subOption }}
@@ -59,9 +60,8 @@
     <button class="restartButton" @click="restartChat">↺</button>
     <div class="userFormWrapper">
       <form @submit.prevent="handleUserInput" id="userForm">
-
         <input ref="userInput" id="userInput" type="text" placeholder="Escriba aquí...">
-        <button type="button" @click="handleUserInput">Enviar</button>
+        <button class="sendButton">Enviar</button>
       </form>
     </div>
   </main>
@@ -69,7 +69,7 @@
 </template>
 
 <script>
-import silbConvo from '../assets/conversation.js';
+import silbConvo from '../assets/conversations/demo.js';
 
 
 import EsMap from "./specialMessages/esMap.vue";
@@ -84,11 +84,10 @@ export default {
       step: 0,
       messages: [],
       spacerHeight: 1000,
-      isWriting: false,
-      currentMessage: null
+      currentMessage: null,
+      lastValue: '',
     }
   },
-
   computed: {
     filteredOptions() {
       //TODO => Add functionality so that as the user types, the options in the question are part-matched and offered, with tab to fill.
@@ -107,7 +106,7 @@ export default {
       console.log('Message received:', message);
 
       if (!message.text || this.$parent.$data.mode !== 'chat') {
-        console.log('No message sent');
+        this.$eventBus.emit('setSilbAction', 'error');
         return;
       }
 
@@ -116,12 +115,10 @@ export default {
           this.$eventBus.emit('newMode', 'help');
         } else if (message.text === 'experto') {
           this.$eventBus.emit('newMode', 'expert');
-        }
-        else if(message.text === 'inicio'){
-       this.restartChat();
+        } else if (message.text === 'inicio') {
+          this.restartChat();
         }
         this.removeOptionButtons();
-        this.$refs.userInput.value = '';
         this.messages.push({text: message.text, author: author, optionSelected: false});
         this.$nextTick(() => {
           this.$eventBus.emit('updateUserAnswers', message);
@@ -135,19 +132,22 @@ export default {
         this.handleSilbMessage(message);
       }
     },
+
     handleSilbMessage(message) {
-      this.$eventBus.emit('setSilbAnimation', 'talk');
+      console.log('Silb message received:', message);
+      this.$eventBus.emit('setSilbAction', 'talk');
       this.step++;
-      this.messages.push({text: message.text.charAt(0), author: 'silb', optionSelected: false});
+      let messageFirst = JSON.parse(JSON.stringify(message));
+      messageFirst.text = message.text.charAt(0);
+      this.messages.push({...messageFirst, author: 'silb', optionSelected: false});
       this.$nextTick(() => {
         this.adjustSpacerHeight();
         this.scrollNewMessageIntoView();
       });
 
       let currentMessage = this.messages[this.messages.length - 1];
-      this.isWriting = true;
       let scrollCalled = false;
-let millisPerLetter = 20;
+      let millisPerLetter = 20;
       for (let i = 1; i < message.text.length; i++) {
         window.setTimeout(() => {
           currentMessage.text += message.text.charAt(i);
@@ -156,63 +156,71 @@ let millisPerLetter = 20;
             scrollCalled = true;
           }
           if (i === message.text.length - 1) {
+
             this.processMessageOptions(message, currentMessage);
           }
         }, millisPerLetter * i);
       }
       this.$refs.userInput?.focus();
     },
-    processMessageOptions(message, currentMessage) {
+
+    async processMessageOptions(message, currentMessage) {
       currentMessage.options = {type: message.options.type, content: []};
+
+      const promises = [];
 
       switch (message.options.type) {
         case 'info':
           console.log('info message received');
-          this.sendMessage('silb', this.steps[this.step]);
+          promises.push(Promise.resolve());
+          setTimeout(() => {
+            this.sendMessage('silb', this.steps[this.step]);
+          }, 1);
           break;
 
         case 'buttons':
         case 'checkbox':
-          currentMessage.selectedCheckboxes = []; // Initialize selectedCheckboxes
-          for (let j = 0; j < message.options?.content?.length; j++) {
-            window.setTimeout(() => {
-              if (!currentMessage.optionSelected) {
-                currentMessage.options.content.push(message.options.content[j]);
-              }
-              if (j === message.options.content.length - 1) {
-                this.$eventBus.emit('setSilbAnimation', 'idle');
-                this.isWriting = false;
-              }
-            }, 10 * j);
-          }
+          let millisPerButton = 100;
+          currentMessage.selectedCheckboxes = [];
+          promises.push(new Promise((resolve) => {
+            for (let j = 0; j < message.options?.content?.length; j++) {
+              setTimeout(() => {
+                if (!currentMessage.optionSelected) {
+                  currentMessage.options.content.push(message.options.content[j]);
+                }
+                if (j === message.options.content.length - 1) {
+                  resolve();
+                }
+              }, millisPerButton * j);
+            }
+          }));
+
           break;
 
         case 'dropdown':
           currentMessage.options.content = message.options.content;
-          currentMessage.selectedOption = message.options.content[0]?.text || ''; // Set the first option as selected
-          const selectedOption = message.options.content[0];
-          currentMessage.selectedSubOption = selectedOption?.options?.[0] || ''; // Set the first sub-option as selected
-          this.$nextTick(() => {
-            this.isWriting = false;
-          });
+          currentMessage.selectedOption = message.title;
+          currentMessage.selectedSubOption = message.subtitle;
+          promises.push(Promise.resolve());
           break;
 
         case 'text':
-          this.isWriting = false;
+          promises.push(Promise.resolve());
           break;
 
         case 'reset':
           console.log('reset message received');
           currentMessage.options.content = message.options.content;
-          this.isWriting = false;
-          this.$eventBus.emit('setSilbAnimation', 'idle');
-          this.$eventBus.emit('runCompleted', '');
+          promises.push(Promise.resolve());
           break;
 
         default:
-          this.isWriting = false;
+          promises.push(Promise.resolve());
           break;
       }
+
+      await Promise.all(promises);
+      this.$eventBus.emit('setSilbAction', 'idle');
     },
     removeOptionButtons() {
       // Implementation to remove option buttons from the last silb message
@@ -226,23 +234,36 @@ let millisPerLetter = 20;
       this.spacerHeight = 1000;
     },
     assignColor(index) {
-      return [
-        "#FFFC88",
-        "#FAF67A",
-        "#F5F06B",
-        "#EFEA5D",
-        "#EAE44E",
-        "#E5DD40",
-        "#E0D731",
-        "#DAD123",
-        "#D5CB14",
-        "#D0C506",
-      ][parseInt(index.toString().slice(-1))];
+      //TODO => Add functionality to assign colors to buttons based on the popularity of the answer. This info will be in the step object.
+      const shadesOfPrimary = [
+        // "var(--primary-color-lightest)",
+        "var(--primary-color-lighter)",
+        // "var(--primary-color-light)",
+        // "var(--primary-color)",
+        // "var(--primary-color-dark)",
+        // "var(--primary-color-darker)",
+        // "var(--primary-color-darkest)"
+      ];
+
+      const shadesOfSecondary = [
+        // "var(--secondary-color-lightest)",
+        // "var(--secondary-color-lighter)",
+        // "var(--secondary-color-light)",
+        //"var(--secondary-color)",
+        "var(--secondary-color-dark)",
+        // "var(--secondary-color-darker)",
+        // "var(--secondary-color-darkest)",
+      ];
+
+      return {
+        backgroundColor: shadesOfPrimary[index % shadesOfPrimary.length],
+        color: shadesOfSecondary[index % shadesOfSecondary.length]
+      };
     },
     handleOptionSelection(event, message) {
       message.selectedOption = event.target.value;
       const selectedOption = message.options.content.find(option => option.text === message.selectedOption);
-      message.selectedSubOption = selectedOption?.options?.[0] || null; // Set the first sub-option as selected
+      message.selectedSubOption = message.subtitle;
       message.options.content = message.options.content.map(option => ({
         ...option,
         visible: option.text === message.selectedOption
@@ -251,8 +272,7 @@ let millisPerLetter = 20;
     handleSubOptionSelection(event, message) {
       message.selectedSubOption = event.target.value;
       this.$refs.userInput.value = event.target.value;
-      //this.sendMessage('user', {text: event.target.value});
-      //this.removeOptionButtons(event.target);
+      this.$refs.userInput.focus();
     },
     scrollNewMessageIntoView() {
       const messages = this.$refs.chatStream.querySelectorAll('.message');
@@ -279,6 +299,7 @@ let millisPerLetter = 20;
       this.$refs.userInput.value = selectedValues.join(' | '); // Set the selected values to the input field
       //this.sendMessage('user', {text: selectedValues});
       message.optionSelected = true;
+      this.$refs.userInput.focus();
     },
     restartChat() {
       this.$eventBus.emit('startNewRun', true);
@@ -291,6 +312,7 @@ let millisPerLetter = 20;
     handleUserInput() {
 
       const userMessage = this.$refs.userInput.value;
+      this.$refs.userInput.value = '';
       if (this.messages.length) {
 
         const lastMessage = this.messages[this.messages.length - 1];
@@ -298,9 +320,10 @@ let millisPerLetter = 20;
         if (lastMessage.options?.type === 'checkbox') {
           this.submitSelection(lastMessage);
         } else if (lastMessage.options?.type === 'dropdown') {
-          this.$refs.userInput.value = lastMessage.selectedSubOption || lastMessage.selectedOption;
+          // this.$refs.userInput.value = lastMessage.selectedSubOption || lastMessage.selectedOption;
         }
       }
+
       this.sendMessage('user', {text: userMessage});
     },
     setInputValue(option) {
@@ -318,6 +341,106 @@ let millisPerLetter = 20;
 
 <style scoped>
 
+.checkboxContainer button {
+  background: var(--secondary-color-light);
+  border: 2px solid var(--secondary-color);
+  padding: 10px;
+  margin: 5px 0;
+  border-radius: 10px;
+  cursor: pointer;
+  width: 100%; /* Ensure buttons take full width */
+}
+
+#checkboxCrtlContainer {
+  position: absolute;
+  width: 50px;
+  right: -60px;
+}
+
+#checkboxCrtlContainer button {
+  width: auto;
+  height: 50px;
+  min-width: 100px;
+  padding: 0;
+  margin: 10px;
+}
+
+#checkboxCrtlContainer button img {
+  width: 46px;
+  height: 46px;
+  border-radius: 10px;
+}
+
+.dropdownWrapper {
+  display: flex;
+  flex-direction: column;
+  margin: 5px 0;
+}
+
+.dropdown {
+  background: var(--background-color-dark);
+  color: var(--text-color);
+  border: 2px solid var(--secondary-color);
+  padding: 5px;
+  margin: 5px 0;
+  border-radius: 10px;
+  max-width: 100%;
+}
+
+#userForm {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  flex: 1;
+}
+
+#userForm button {
+  background: var(--button-bg-color);
+  border: 1px solid var(--button-bg-dark);
+  color: var(--text-color);
+  margin: 0 10px;
+  padding: 10px 0;
+}
+
+#userForm button:hover {
+  background: var(--button-hover-bg-color);
+  border: 1px solid var(--button-bg-dark);
+}
+
+#userInput {
+  padding: .5em;
+  display: flex;
+  flex: 4;
+  border: var(--border-color);
+}
+
+#spacer {
+  flex-shrink: 0;
+}
+
+.checkboxPair {
+  flex: 1 1 auto;
+}
+
+.resetButton {
+  background-color: var(--button-bg-color);
+  color: var(--text-color);
+  border: 1px solid var(--button-bg-dark);
+  margin: 10px;
+  font-weight: bold;
+}
+
+.restartButton {
+  width: 50px;
+  height: 50px;
+  position: absolute;
+  top: 0;
+  right: 15px;
+  font-size: 2em;
+  background: var(--button-bg-color);
+  border: 1px solid var(--button-bg-dark);
+  color: var(--text-color);
+}
 
 .chatArea {
   display: flex;
@@ -329,7 +452,7 @@ let millisPerLetter = 20;
   border-style: solid;
   border-image: linear-gradient(
       to bottom,
-      black,
+      var(--button-bg-dark),
       rgba(0, 0, 0, 0)
   ) 1 100%;
   max-height: 100%;
@@ -341,13 +464,11 @@ div.chatStream {
 }
 
 div.userFormWrapper {
-  width: 100%;
+  width: 90%;
   display: flex;
-  margin-top: 3px;
-  box-shadow: 0 0 40px 10px white;
-
+  padding: 20px 5%;
+  background-color: var(--background-color-dark);
 }
-
 
 .message {
   width: 75%;
@@ -362,16 +483,16 @@ div.userFormWrapper {
 }
 
 .messageUser {
-  border: #407FFF 2px solid;
-  background: #cbcbcb;
-  color: black;
+  border: var(--secondary-color) 2px solid;
+  background: var(--primary-color-lighter);
+  color: var(--text-color);
   align-self: flex-end;
 }
 
 .messageSilb {
-  background: #cbcbcb;
-  color: black;
-  border: 2px solid yellow;
+  background: var(--secondary-color-lightest);
+  color: var(--text-color);
+  border: 2px solid var(--primary-color-dark);
   align-self: flex-start;
 }
 
@@ -381,9 +502,12 @@ div.userFormWrapper {
 }
 
 .messageSilb .optionButtons {
-  flex: 1 1 auto;
-  border: 1px solid yellow;
+  border: 1px solid var(--border-color);
   margin: 5px;
+  padding: 10px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-weight: bold;
 }
 
 .checkboxContainer {
@@ -405,9 +529,9 @@ div.userFormWrapper {
 
 .checkboxContainer label {
   display: block;
-  background: #cbcbcb;
-  color: black;
-  border: 2px solid yellow;
+  background: var(--background-color-light);
+  color: var(--text-color);
+  border: 2px solid var(--secondary-color);
   padding: 10px;
   margin: 0; /* Remove space between checkboxes */
   border-radius: 10px;
@@ -418,111 +542,11 @@ div.userFormWrapper {
 }
 
 .checkboxContainer input[type="checkbox"]:checked + label {
-  background: yellow;
-  color: black;
+  background: var(--secondary-color);
+  color: var(--text-color);
 }
 
-.checkboxContainer button {
-  background: gold;
-  border: 2px solid yellow;
-  padding: 10px;
-  margin: 5px 0;
-  border-radius: 10px;
-  cursor: pointer;
-  width: 100%; /* Ensure buttons take full width */
-}
-
-#checkboxCrtlContainer {
-  position: absolute;
-  width: 50px;
-  right: -60px;
-}
-
-#checkboxCrtlContainer button {
-  width: 50px;
-  height: 50px;
-
-  padding: 0;
-  margin: 0;
-}
-
-#checkboxCrtlContainer button img {
-  width: 46px;
-  height: 46px;
-  border-radius: 10px;
-}
-
-
-.dropdownWrapper {
-  display: flex;
-  flex-direction: column;
-  margin: 5px 0;
-}
-
-.dropdown {
-  background: #cbcbcb;
-  color: black;
-  border: 2px solid yellow;
-  padding: 5px;
-  margin: 5px 0;
-  border-radius: 10px;
-  max-width: 100%;
-}
-
-#userForm {
-  display: flex;
-  flex-direction: row;
-  flex-wrap: nowrap;
-  flex: 1;
-}
-
-#userForm button {
-  display: flex;
-  flex: 1;
-  text-align: center;
-  background: #cbcbcb;
-  border: 1px solid gold;
-  margin: 0 10px;
-  padding: 10px 0;
-  justify-content: center;
-}
-
-#userForm button:hover {
-  background: gold;
-  border: 1px solid #cbcbcb;
-}
-
-#userInput {
-  padding: .5em;
-  display: flex;
-  flex: 4;
-}
-
-
-#spacer {
-  flex-shrink: 0;
-}
-
-
-.checkboxPair {
-  flex: 1 1 auto;
-}
-
-
-.resetButton {
-  background-color: yellow; /* Use background-color instead of background */
-  color: black;
-  border: 1px solid black;
-  margin: 10px;
-  font-weight: bold;
-}
-
-.restartButton {
-  width: 50px;
-  position: absolute;
-  top: 0;
-  right: 15px;
-  border: 1px solid yellow;
-  background: lightgray;
+.sendButton {
+  min-width: 15%;
 }
 </style>
