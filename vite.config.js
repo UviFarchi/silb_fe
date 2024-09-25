@@ -9,5 +9,5 @@ export default defineConfig({
             $: 'jquery',
             jQuery: 'jquery',
         }), vue()],
-    assetsInclude: "**/*.html"
+  //  assetsInclude: "**/*.html"
 })
