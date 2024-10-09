@@ -1,5 +1,5 @@
 <template>
-  <div class="expertWrapper" :key="componentKey">
+  <div class="expertWrapper">
     <table class="expertTable">
       <thead>
       <tr>
@@ -22,8 +22,9 @@
           :key="index"
           class="messageRow"
           v-show="isVisible(index)"
+          :class="step.options.type === 'reset' ? 'resetRow' : ''"
       >
-        <td class="questionCell">{{ step.short || step.text }}</td>
+        <td class="questionCell">{{ step.options.type !== 'reset' ? step.short || step.text : '' }}</td>
         <td class="answerCell">
           <div v-if="step.options.type === 'buttons'" class="btnGroup">
             <select @change="recordAnswer($event.target, $event.target.value, index)" v-model="selectedAnswers[index]">
@@ -32,6 +33,7 @@
                   v-for="(option, idx) in step.options.content"
                   :key="idx"
                   class="btn"
+                  :class="{ defaultAnswer: defaultAnswers[index] === option }"
               >{{ option }}
               </option>
             </select>
@@ -42,6 +44,7 @@
                 class="textInput"
                 placeholder="elija uno"
                 v-model="selectedAnswers[index]"
+                :class="{ defaultAnswer: defaultAnswers[index] === selectedAnswers[index] && defaultAnswers[index]}"
             />
           </div>
           <div v-if="step.options.type === 'checkbox'" class="checkboxesWrapper">
@@ -57,6 +60,7 @@
                   :value="option"
                   @change="handleCheckboxChange(option, index, $event)"
                   :checked="selectedAnswers[index] && selectedAnswers[index].includes(option)"
+                  :class="{ defaultAnswer: defaultAnswers[index] && selectedAnswers[index] && selectedAnswers[index].includes(option) }"
               />
               <label :for="'checkbox-' + index + '-' + idx" class="checkboxLabel">{{ option }}</label>
             </div>
@@ -70,7 +74,9 @@
                   :key="idx"
               >
                 <optgroup :label="category.text">
-                  <option v-for="option in category.options" :key="option">{{ option }}</option>
+                  <option v-for="option in category.options" :key="option"
+                          :class="{ defaultAnswer: defaultAnswers[index] === option }">{{ option }}
+                  </option> <!-- Apply class here -->
                 </optgroup>
               </template>
             </select>
@@ -79,18 +85,20 @@
             <div class="mapPlaceholder">No hay información</div>
           </div>
           <div v-if="step.options.type === 'reset'">
-            <button @click="resetForm">{{ step.short }}</button>
+            <button class="resetBtn" @click="resetForm">{{ step.short }}</button>
           </div>
         </td>
+
         <td class="defaultCell">
 
           <input
               type="checkbox"
               @change="toggleDefault(index, $event)"
               :checked="defaultAnswers[index] !== undefined"
+              v-if="step.options.type !== 'reset' && this.answers[index]"
           />
-
-          <i v-if="defaultAnswers[index] !== undefined && answers[index] !== undefined && answers[index] !== defaultAnswers[index]">La
+          {{ defaultAnswers[index] }}
+          <i v-if="!valueEqualsDefault(defaultAnswers[index], answers[index])">La
             opción elegida no es la predeterminada. </i>
           <div v-if="step.options.type === 'checkbox'">
             <button @click="selectAll(step.options.content, index)" title="Seleccionar Todas">Seleccionar Todas
@@ -111,21 +119,16 @@
               @click="recordAnswer($event.target, selectedAnswers[index], index)">OK
           </button>
           <button
-              v-else-if=" step.options.type === 'checkbox' && !answers[index]"
+              v-if="step.options.type === 'checkbox' && !answers[index]"
               class="okBtn"
-              @click="recordAnswer($event.target, selectedAnswers[index], index)">OK
+              @click="recordAnswer($event.target, selectedAnswers[index], index)">
+            OK
           </button>
+
         </td>
       </tr>
       </tbody>
     </table>
-    <div v-if="showConfirmModal" class="modal">
-      <div class="modal-content">
-        <p>¿Estás seguro de que deseas restablecer todas las respuestas predeterminadas?</p>
-        <button @click="confirmClearDefaults(true)">Aceptar</button>
-        <button @click="confirmClearDefaults(false)">Cancelar</button>
-      </div>
-    </div>
   </div>
 </template>
 <script>
@@ -136,21 +139,53 @@ export default {
   data() {
     return {
       steps: conversation.steps,
-      componentKey: 0,
       selectedAnswers: {},
       answers: {},
       defaultAnswers: {},
-      visibleIndexes: [],
+      visibleIndexes: []
     };
   },
   mounted() {
-    console.log('Mounting Expert mode')
+
     this.loadDefaultAnswers();
-    this.$eventBus.emit('startNewRun', true);
+    this.$eventBus.emit('startNewRun', false);
+    // Add a global keydown listener for the Enter key
+    window.addEventListener('keydown', this.handleEnterKey);
+  },
+  beforeDestroy() {
+    // Remove the global keydown listener
+    window.removeEventListener('keydown', this.handleEnterKey);
   },
   methods: {
+
+    valueEqualsDefault(defaultAnswer, answer) {
+      if (defaultAnswer === undefined || answer === undefined) {
+        // If either is undefined, return true
+        return true;
+      }
+
+      if (Array.isArray(defaultAnswer) && Array.isArray(answer)) {
+        // Compare arrays for length and element equality
+        return defaultAnswer.length === answer.length &&
+            answer.every((value, i) => value === defaultAnswer[i]);
+      }
+
+      // Compare other types (strings, numbers, etc.)
+      return defaultAnswer === answer;
+    }
+    ,
+    handleEnterKey(event) {
+      if (event.key === 'Enter') {
+        // Find the first visible OK button and trigger its click event
+        const visibleOkButton = document.querySelector('.okBtn:not([disabled]):not([hidden])');
+        if (visibleOkButton) {
+          visibleOkButton.click();
+        }
+      }
+    },
     recordAnswer(target, answer, index) {
-      target.closest('tr').classList.add('answered');
+      target.closest('tr')?.classList.add('answered');
+
       const newAnswers = {...this.answers};
       const newSelectedOptions = {...this.selectedAnswers};
 
@@ -161,28 +196,29 @@ export default {
         }
       });
 
+      // Update answers and selections
       this.answers = {...newAnswers, [index]: answer};
       this.selectedAnswers = newSelectedOptions;
 
-      console.log('Answer recorded:', answer, 'for index:', index);
+      // Emit answer only when OK is clicked
       this.emitAnswer(index);
 
-      // Save answer as default if the default checkbox is checked
+      // Save answer as default if the checkbox is checked
       if (this.defaultAnswers[index] !== undefined) {
         this.saveDefaultAnswers();
       }
-    },
+    }
+    ,
     resetForm() {
-      this.$eventBus.emit('runCompleted', '');
-      this.$eventBus.emit('startNewRun', true);
-      this.componentKey += 1;
       this.selectedAnswers = {};
       this.answers = {};
+      this.defaultAnswers = {};
       this.visibleIndexes = [];
+      this.$eventBus.emit('runCompleted', '');
+      this.$eventBus.emit('startNewRun', false);
       this.loadDefaultAnswers();
-    },
-    handleDefault() {
-    },
+    }
+    ,
     selectAll(options, index) {
       this.selectedAnswers = {...this.selectedAnswers, [index]: [...options]};
       if (this.defaultAnswers[index] !== undefined) {
@@ -224,25 +260,31 @@ export default {
         }
       }
 
+      // Just update the internal state, no emission here
       this.selectedAnswers = {...this.selectedAnswers, [index]: selected};
 
-      // Save answer as default if the default checkbox is checked
+      // Save the answer as a default, but do not emit yet
       if (this.defaultAnswers[index] !== undefined) {
         this.saveDefaultAnswers();
       }
+    }
 
-     // this.emitAnswer(index);
-    },
+    ,
     toggleDefault(index, event) {
       if (event.target.checked) {
-        this.defaultAnswers = {...this.defaultAnswers, [index]: this.answers[index]};
+        if (Array.isArray(this.selectedAnswers[index])) {
+          this.defaultAnswers = {...this.defaultAnswers, [index]: [...this.selectedAnswers[index]]};
+        } else {
+          this.defaultAnswers = {...this.defaultAnswers, [index]: this.answers[index]};
+        }
       } else {
         const newDefaultAnswers = {...this.defaultAnswers};
         delete newDefaultAnswers[index];
         this.defaultAnswers = newDefaultAnswers;
       }
       this.saveDefaultAnswers();
-    },
+    }
+    ,
     saveDefaultAnswers() {
       localStorage.setItem('defaultAnswers', JSON.stringify(this.defaultAnswers));
     },
@@ -253,17 +295,20 @@ export default {
 
         // Ensure selectedAnswers is updated correctly for checkbox-type inputs
         for (const [index, answer] of Object.entries(this.defaultAnswers)) {
-          this.selectedAnswers[index] = answer;
+          if (Array.isArray(answer)) {
+            this.selectedAnswers = {...this.selectedAnswers, [index]: [...answer]};
+          } else {
+            this.selectedAnswers = {...this.selectedAnswers, [index]: answer};
+          }
         }
       }
-    },
+    }
+    ,
     emitAnswer(index) {
       const answer = this.answers[index];
-      if (Array.isArray(answer)) {
-        answer.forEach((a) => this.$eventBus.emit('updateUserAnswers', {text: a, index}));
-      } else {
-        this.$eventBus.emit('updateUserAnswers', {text: answer, index});
-      }
+
+      this.$eventBus.emit('updateUserAnswers', {text: answer, index});
+
     },
     clearDefaults() {
       const confirmed = window.confirm("¿Estás seguro de que deseas restablecer todas las respuestas predeterminadas?");
@@ -306,18 +351,20 @@ th, td {
   margin: 0;
 }
 
-select, option, optgroup {
+option, optgroup {
   border-radius: 3px;
   color: var(--text-color);
   font-family: Arial, sans-serif;
   font-size: 14px;
-  padding: 5px;
   text-align: left;
 }
 
 select {
+  border-radius: 3px;
+  color: var(--text-color);
+  font-family: Arial, sans-serif;
+  font-size: 14px;
   appearance: none; /* Remove default styling */
-  max-width: 100%;
 }
 
 .resetBtn {
@@ -327,21 +374,30 @@ select {
   border-radius: 3px;
   cursor: pointer;
   display: block;
-  font-size: 12px;
   margin-top: 5px;
   padding: 5px;
+  position: absolute;
+  height: 50px;
+  width: 100px;
+  text-align: center;
+  font-size: large;
+  left: 25%;
 }
 
 .resetBtn:hover {
   background-color: var(--button-hover-bg-color);
-  color: var(--text-color-light);}
-
-.btnGroup {
-  display: flex;
-  flex-wrap: wrap;
+  color: var(--text-color-light);
 }
 
-option{
+.btnGroup {
+  display: grid;
+  flex-wrap: wrap;
+  min-width: 100%;
+  width: 100%;
+  max-width: 100%;
+}
+
+option {
 
   border-radius: 3px;
   cursor: pointer;
@@ -356,8 +412,11 @@ option{
   color: var(--text-color-light);
 }
 
-.textInput, .dropdown {
-  width: calc(100% - 12px);
+.textInput, select {
+  width: 100%;
+  margin: 0 auto;
+  height: 30px;
+  padding: 5px;
 }
 
 .checkboxGroup {
@@ -414,4 +473,14 @@ option{
   border: 2px solid var(--text-color);
   background: var(--text-color-light);
 }
+
+.resetRow {
+  height: 0;
+  border: none;
+}
+
+.defaultAnswer {
+  background-color: var(--accent-color); /* Choose your desired background color */
+}
+
 </style>

@@ -60,6 +60,7 @@ export default {
     this.$eventBus.on('runCompleted', this.startJob);
     this.$eventBus.on('brickApp', this.brickApp);
 
+
     this.scrollbarWidth = this.getScrollbarWidth();
 
     if (this.checkToken()) {
@@ -84,7 +85,7 @@ export default {
       document.body.appendChild(scrollDiv);
       // Calculate the scrollbar width
       let scrollbarWidth = scrollDiv.offsetWidth - scrollDiv.clientWidth;
-      console.log('scrollbarWidth', this.scrollbarWidth);
+
       // Remove the div from the body
       document.body.removeChild(scrollDiv);
 
@@ -93,15 +94,15 @@ export default {
     updateUserAnswers(newAnswer) {
       this.$refs.statusPanel.handleUserAnswer(newAnswer);
     },
-    startNewRun(e) {
-      this.$refs.statusPanel.startNewRun();
+    startNewRun(isRestart) {
+      this.$refs.statusPanel.startNewRun(isRestart);
     },
     startJob() {
       this.$refs.statusPanel.startJob();
     },
     sendNotificationInChat(message) {
       if(this.mode === 'chat') {
-        console.log('send notification event received.');
+
         this.$refs.chatMode.sendMessage('silb', {
           text: message,
           options: {type: "info"}
@@ -109,7 +110,7 @@ export default {
       }
     },
     setMode(newMode) {
-      console.log('mode changed to', newMode);
+
       this.mode = newMode;
       this.$refs.statusPanel.resetUserAnswers();
       const mainStage = this.$refs.mainStage;
@@ -144,7 +145,7 @@ export default {
     checkToken() {
       let token = new URL(location.href).searchParams.get('token');
 
-      console.log(token)
+
       if (token) {
         //TODO => Do proper id check on server side, then emit
         let permittedTokens = [

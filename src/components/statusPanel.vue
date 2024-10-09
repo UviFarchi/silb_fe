@@ -52,7 +52,6 @@ export default {
   data() {
     return {
       userAnswers: [[]],
-      currentRunAnswer: [],
       runStatus: {},
       jobIds: [],
       userDetails: {}
@@ -70,7 +69,7 @@ export default {
     const params = new URLSearchParams(window.location.search);
     const token = params.get('token');
     const decodedTokenString = atob(token);
-    console.log(params, token, decodedTokenString)
+
     this.userDetails = JSON.parse(decodedTokenString);
   },
   methods: {
@@ -78,27 +77,27 @@ export default {
       this.userAnswers = [];
     },
     resetCurrentRun() {
-      this.userAnswers[this.userAnswers.length - 1] = [];
+      this.userAnswers[0] = [];
     },
     handleUserAnswer(answer) {
-      console.log('answer received:' + answer);
-      let currentAnswers = this.userAnswers[this.userAnswers.length - 1];
 
-      if (answer?.index < currentAnswers.length) { //Answer has been modified
-        console.log(answer.index)
-        currentAnswers[answer.index] += ' | ' + answer.text;
-        currentAnswers.length = answer.index + 1;
-
+      let currentAnswers = this.userAnswers[0];
+      if (answer.index < currentAnswers.length) {
+        currentAnswers[answer.index] = answer.text; // Replace the answer
       } else {
-        currentAnswers.push(answer.text); // New Answer
+        currentAnswers.push(answer.text); // Add new answer
+
       }
     },
-    startNewRun() {
-      const filteredArray = this.userAnswers.filter(arr => arr.length > 0);
-      filteredArray.push([]);
-      this.userAnswers = filteredArray;
-      console.log(this.userAnswers);
-      this.currentRunAnswer = [];
+    startNewRun(isRestart) {
+      console.log('User answers at run start', this.userAnswers);
+      if (isRestart) {
+        this.resetCurrentRun();
+      } else {
+        const filteredArray = this.userAnswers.filter(arr => arr.length > 0);
+        filteredArray.unshift([]);
+        this.userAnswers = filteredArray;
+      }
     },
     async startJob() {
       //Summarize panel
@@ -118,7 +117,7 @@ export default {
         body: JSON.stringify(this.userAnswers[this.userAnswers.length - 1]) // Send JSON body
       });
       const data = await response.json();
-      console.log('Job started with ID:', data.jobId);
+
 
       // Replace the placeholder jobId with the actual jobId
       const index = this.jobIds.indexOf(jobIdPlaceholder);
@@ -130,10 +129,11 @@ export default {
       this.listenForJobCompletion(data.jobId);
     },
     listenForJobCompletion(jobId) {
+
       this.eventSource = new EventSource('http://localhost:3000/events'); // Ensure the URL is correct
       this.eventSource.onmessage = (event) => {
         const data = JSON.parse(event.data);
-        console.log('Event received:', data);
+
         this.$eventBus.emit('newNotification', `Parece que hemos encontrado ${data.result} que necesitas. Pulsa <a href="${data.url}" target="_blank">aquí </a> para acceder a ella.`);
         if (data.jobId === jobId) {
           // Directly update runStatus with result and url
@@ -200,7 +200,8 @@ export default {
 
 .jobTable th {
   background-color: var(--background-color-light);
-  color: var(--secondary-color);}
+  color: var(--secondary-color);
+}
 
 .answersTable {
   background: var(--background-color);
@@ -225,7 +226,6 @@ export default {
 #userDetails {
   text-align: left;
 }
-
 
 
 h1, h2 {

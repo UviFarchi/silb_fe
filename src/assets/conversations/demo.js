@@ -6,13 +6,12 @@ export default {
         {
             "text": "Hola, soy Silb.io, el robot que se pone en la cola para hacer cita en la administración pública por tí.<br/>" +
                 "Si necesitas que te explique cómo usarme, escribe 'ayuda' o presiona el botón (?).<br/>" +
-                "Para volver a comenzar la conversación, escribe 'inicio' o presiona el botón (↺).<br/>"+
-                "Comencemos.",
+                "Para volver a comenzar la conversación, escribe 'inicio' o presiona el botón (↺).",
             "short": "Hola",
             "options": {"type": "info"}
         },
         {
-            "text": "¿Con qué administración necesitas la cita?",
+            "text": "Para empezar .¿Con qué administración necesitas la cita?",
             "short": "Administración",
             "options": {"type": "buttons", "content": Object.keys(references.authorities)}
         },
@@ -31,7 +30,7 @@ export default {
             "short": "Trámite",
             "options": {"type": "buttons", "content": references.procedures.extranjeria.barcelona.procedures}
         },
-        {
+         {
             "text": "Perfecto, estas son las oficinas donde lo hacen. Selecciona tantas como te vengan bien.",
             "short": "Oficinas",
             "options": {

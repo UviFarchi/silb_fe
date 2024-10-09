@@ -19,8 +19,8 @@
           </button>
         </div>
         <div v-if="message.options?.type==='checkbox' && idx === messages.length - 1" class="checkboxContainer">
-          <div id="checkboxCrtlContainer">
-            <button @click="selectAll(message)" title="Seleccionar Todas">Seleccionar Todas</button>
+          <div id="checkboxCrtlContainer" v-if="message.options?.content?.length > 0">
+          <button @click="selectAll(message)" title="Seleccionar Todas">Seleccionar Todas</button>
             <button @click="deselectAll(message)" title="No Seleccionar Ninguna">No Seleccionar Ninguna</button>
             <button @click="submitSelection(message)" title="Confirmar Selección">OK</button>
           </div>
@@ -32,7 +32,7 @@
         </div>
         <div v-if="message.options?.type==='dropdown'" class="dropdownWrapper">
           <select v-model="message.selectedOption" @change="handleOptionSelection($event, message)" class="dropdown">
-            <option disabled :value="message.title" >{{ message.title }}</option>
+            <option disabled :value="message.title">{{ message.title }}</option>
             <option v-for="option in message.options.content" :key="option.text" :value="option.text">{{
                 option.text
               }}
@@ -40,7 +40,7 @@
           </select>
           <select v-if="message.selectedOption" v-model="message.selectedSubOption"
                   @change="handleSubOptionSelection($event, message)" class="dropdown">
-            <option disabled :value="message.subtitle" >{{ message.subtitle }}</option>
+            <option disabled :value="message.subtitle">{{ message.subtitle }}</option>
             <option
                 v-for="subOption in message.options.content.find(opt => opt.text === message.selectedOption)?.options"
                 :key="subOption" :value="subOption">{{ subOption }}
@@ -51,13 +51,13 @@
 
         </div>
         <button class='resetButton' v-if="message.options?.type==='reset' && idx === messages.length - 1"
-                @click="restartChat">
+                @click="restartChat(false)">
           {{ message.options.content }}
         </button>
       </div>
       <div id="spacer" :style="{ height: spacerHeight + 'px' }"></div>
     </div>
-    <button class="restartButton" @click="restartChat">↺</button>
+    <button class="restartButton" @click="restartChat(true)">↺</button>
     <div class="userFormWrapper">
       <form @submit.prevent="handleUserInput" id="userForm">
         <input ref="userInput" id="userInput" type="text" placeholder="Escriba aquí...">
@@ -103,7 +103,7 @@ export default {
   methods: {
 
     sendMessage(author, message) {
-      console.log('Message received:', message);
+
 
       if (!message.text || this.$parent.$data.mode !== 'chat') {
         this.$eventBus.emit('setSilbAction', 'error');
@@ -116,7 +116,7 @@ export default {
         } else if (message.text === 'experto') {
           this.$eventBus.emit('newMode', 'expert');
         } else if (message.text === 'inicio') {
-          this.restartChat();
+          this.restartChat(true);
         }
         this.removeOptionButtons();
         this.messages.push({text: message.text, author: author, optionSelected: false});
@@ -134,12 +134,16 @@ export default {
     },
 
     handleSilbMessage(message) {
-      console.log('Silb message received:', message);
+
       this.$eventBus.emit('setSilbAction', 'talk');
       this.step++;
-      let messageFirst = JSON.parse(JSON.stringify(message));
-      messageFirst.text = message.text.charAt(0);
-      this.messages.push({...messageFirst, author: 'silb', optionSelected: false});
+      let messageObject = JSON.parse(JSON.stringify(message))
+      delete messageObject.options.content;
+      messageObject.text = message.text.charAt(0);
+      messageObject.author = 'silb';
+      messageObject.optionSelected = false;
+
+      this.messages.push(messageObject);
       this.$nextTick(() => {
         this.adjustSpacerHeight();
         this.scrollNewMessageIntoView();
@@ -147,7 +151,7 @@ export default {
 
       let currentMessage = this.messages[this.messages.length - 1];
       let scrollCalled = false;
-      let millisPerLetter = 20;
+      let millisPerLetter = 10;
       for (let i = 1; i < message.text.length; i++) {
         window.setTimeout(() => {
           currentMessage.text += message.text.charAt(i);
@@ -171,7 +175,7 @@ export default {
 
       switch (message.options.type) {
         case 'info':
-          console.log('info message received');
+
           promises.push(Promise.resolve());
           setTimeout(() => {
             this.sendMessage('silb', this.steps[this.step]);
@@ -209,7 +213,8 @@ export default {
           break;
 
         case 'reset':
-          console.log('reset message received');
+
+          this.$eventBus.emit('runCompleted', '');
           currentMessage.options.content = message.options.content;
           promises.push(Promise.resolve());
           break;
@@ -301,8 +306,8 @@ export default {
       message.optionSelected = true;
       this.$refs.userInput.focus();
     },
-    restartChat() {
-      this.$eventBus.emit('startNewRun', true);
+    restartChat(isRestart) {
+      this.$eventBus.emit('startNewRun', isRestart);
       this.clearAllMessages();
       this.step = 0;
       this.sendMessage('silb', this.steps[this.step]);
@@ -310,20 +315,11 @@ export default {
 
     },
     handleUserInput() {
-
       const userMessage = this.$refs.userInput.value;
       this.$refs.userInput.value = '';
       if (this.messages.length) {
-
-        const lastMessage = this.messages[this.messages.length - 1];
-        this.currentMessage = lastMessage;
-        if (lastMessage.options?.type === 'checkbox') {
-          this.submitSelection(lastMessage);
-        } else if (lastMessage.options?.type === 'dropdown') {
-          // this.$refs.userInput.value = lastMessage.selectedSubOption || lastMessage.selectedOption;
-        }
+        this.currentMessage = this.messages[this.messages.length - 1];
       }
-
       this.sendMessage('user', {text: userMessage});
     },
     setInputValue(option) {
@@ -332,9 +328,9 @@ export default {
     },
   },
   mounted() {
-    console.log('mounted');
+
     this.sendMessage('silb', this.steps[0]);
-    this.$eventBus.emit('startNewRun', true);
+    this.$eventBus.emit('startNewRun', false);
   }
 }
 </script>
