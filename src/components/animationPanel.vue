@@ -8,7 +8,7 @@ export default {
   },
   methods: {
     setSilbAction(newAction) {
-      let errorTimeout = 5000;
+      let errorTimeout = 1500;
       this.silbAction = newAction;
       if (newAction === 'error') {
         setTimeout(() => {
@@ -24,40 +24,53 @@ export default {
 
 <template>
   <section class="animationContainer">
-    <div class="robot-container">
-      <div :class="['eye', 'left', silbAction]"></div>
-      <div :class="['eye' ,'right', silbAction]"></div>
-      <div :class="['mouth', silbAction]"></div>
+    <div class="robotContainer">
+      <div class="faceContainer">
+        <div :class="['eye', 'left', silbAction]"></div>
+        <div :class="['eye', 'right', silbAction]"></div>
+        <div :class="['mouth', silbAction]"></div>
+      </div>
     </div>
   </section>
 </template>
 
+
 <style scoped>
 .animationContainer {
-  background-position: center;
-  background-repeat: no-repeat;
-  background-size: contain;
   width: 100%;
+  height: 100%;
 }
 
-.robot-container {
+.robotContainer {
   position: relative;
-  width: 400px;
-  height: 100%;
+  width: auto;
+  height: auto;
   background-image: url('../assets/animations/silb_base.png');
   background-size: contain;
   background-repeat: no-repeat;
   background-position: center;
+  aspect-ratio: 1;
+  margin: 50% 0;
+}
+
+.faceContainer {
+  position: relative;
+  width: 41%;
+  height: 25%;
+  top: 25%;
+  border-radius: 35%;
+  left: 49%;
+  transform: translate(-50%, -50%);
 }
 
 .eye {
   position: absolute;
-  width: 40px;
-  height: 20px;
+  width: 20%;
+  height: 20%;
   background-color: #6ee2ff;
   border-radius: 50%;
-  top: 37%;
-  animation: blink 2s infinite;
+  top: 30%;
+  animation: blink 3s infinite;
 }
 
 .eye.error {
@@ -65,39 +78,37 @@ export default {
 }
 
 .eye.left {
-  left: 37%;
+  left: 20%;
 }
 
 .eye.right {
-  right: 37%;
+  right: 20%;
 }
 
-/* Randomized blinking animation */
+
+
+/*  blinking animation */
 @keyframes blink {
   0%, 80%, 100% {
-    height: 20px;
-    top: 37%;
+    height: 20%;
+    top: 30%;
   }
   85%, 95% {
-    height: 2px;
-    top: 39%;
+    height: 0.1%;
+    top: 40%;
   }
 }
 
 .mouth {
   position: absolute;
-  width: 5%;
-  height: 2px;
+  width: 1%;
+  height: 5%;
   background-color: #6ee2ff;
   border-radius: 50px / 20px;
-  left: 47.5%;
-  top: 41%;
+  left: 50%;
+  top: 70%;
+  transform: translateX(-50%);
   transition: all 0.5s ease;
-}
-
-/* Idle mouth animation */
-.mouth.idle {
-  animation: smileChange 40s infinite ease-in-out;
 }
 
 /* Idle mouth animation */
@@ -108,86 +119,181 @@ export default {
 /* Yawn, Smile, and Mouth Movement Sequence */
 @keyframes smileChange {
   /* Base state */
-  0%, 12.5%, 22.5%, 40%, 50%, 62.5%, 75%, 100% {
-    height: 2px;
+  0%, 12.5%, 22.5%, 37%, 50%, 75%, 100% {
+    height: 5%; /*2px;*/
     width: 5%;
-    left: 47.5%;
-    top: 41%;
+    left: 50%;
+    top: 70%;
+    rotate: 0deg;
   }
 
   /* Smile (mouth grows bigger) */
-  25%, 37% {
-    height: 5px;
+  25% {
+    height: 7%;
     width: 20%;
-    left: 40%;
-    top: 41%;
+    left: 45%;
+    top: 72%;
+    rotate: 10deg;
+  }
+  /* Smile (mouth grows bigger) */
+   60% {
+    height: 7%;
+    width: 20%;
+    left: 55%;
+    top: 72%;
+    rotate: -10deg;
   }
 
   /* Mouth moving left to right */
   67.5% {
-    height: 5px;
+    height: 12%;
     width: 5%;
-    left: 46%;
-    top: 40.5%;
+    left: 48%;
+    top: 68%;
   }
   70% {
-    height: 5px;
+    height: 12%;
     width: 5%;
-    left: 49%;
-    top: 41%;
+    left: 52%;
+    top: 72%;
   }
   75% {
-    height: 5px;
+    height: 12%;
     width: 5%;
-    left: 47%;
-    top: 41%;
+    left: 50%;
+    top: 70%;
   }
 
   /* Yawn (mouth grows bigger) */
   82.5% {
-    height: 20px;
+    height: 40%;
     width: 20%;
-    left: 40%;
-    top: 41%;
+    left: 48%;
+    top: 50%;
   }
 }
 
 
 /* Talking mouth animation */
 .mouth.talk {
-  animation: talkAnimation 1s infinite;
+  animation: talkAnimation 3s infinite;
 }
 
+/* Talking mouth animation */
 @keyframes talkAnimation {
-  0%, 80%, 100% {
-    height: 2px;
+  0%, 95%, 100% {
+    height: 2%;
     width: 5%;
-    left: 47.5%;
+    left: 50%;
+    top: 70%;
+  }
+  5% {
+    height: 6%;
+    width: 8%;
+    left: 50%;
+    top: 69.5%;
+  }
+  10% {
+    height: 12%;
+    width: 14%;
+    left: 50%;
+    top: 68.5%;
+  }
+  15% {
+    height: 8%;
+    width: 10%;
+    left: 50%;
+    top: 69%;
   }
   20% {
-    height: 10px;
-    width: 10%;
-    left: 45%;
+    height: 16%;
+    width: 18%;
+    left: 50%;
+    top: 67.5%;
+  }
+  25% {
+    height: 5%;
+    width: 7%;
+    left: 50%;
+    top: 70%;
   }
   30% {
-    height: 2px;
-    width: 5%;
-    left: 47.5%;
+    height: 10%;
+    width: 12%;
+    left: 50%;
+    top: 69%;
+  }
+  35% {
+    height: 18%;
+    width: 20%;
+    left: 50%;
+    top: 67%;
+  }
+  40% {
+    height: 4%;
+    width: 6%;
+    left: 50%;
+    top: 70%;
+  }
+  45% {
+    height: 14%;
+    width: 16%;
+    left: 50%;
+    top: 68%;
   }
   50% {
-    height: 15px;
-    width: 12%;
-    left: 44%;
+    height: 20%;
+    width: 22%;
+    left: 50%;
+    top: 66.5%;
+  }
+  55% {
+    height: 6%;
+    width: 8%;
+    left: 50%;
+    top: 69.5%;
   }
   60% {
-    height: 10px;
+    height: 15%;
+    width: 17%;
+    left: 50%;
+    top: 67.5%;
+  }
+  65% {
+    height: 5%;
     width: 7%;
-    left: 46%;
+    left: 50%;
+    top: 70%;
+  }
+  70% {
+    height: 12%;
+    width: 14%;
+    left: 50%;
+    top: 68.5%;
+  }
+  75% {
+    height: 8%;
+    width: 10%;
+    left: 50%;
+    top: 69%;
+  }
+  80% {
+    height: 16%;
+    width: 18%;
+    left: 50%;
+    top: 67.5%;
+  }
+  85% {
+    height: 4%;
+    width: 6%;
+    left: 50%;
+    top: 70%;
   }
   90% {
-    height: 5px;
-    width: 8%;
-    left: 46.5%;
+    height: 10%;
+    width: 12%;
+    left: 50%;
+    top: 69%;
   }
 }
 
@@ -202,7 +308,7 @@ export default {
   font-size: 30px;
   color: red;
   display: block;
-  animation: errorAnimation 1.67s infinite ease-in-out;
+  animation: errorAnimation 1s infinite normal;
   position: absolute;
   left: 50%;
   top: 50%;
@@ -213,19 +319,15 @@ export default {
 @keyframes errorAnimation {
   0%, 100% {
     transform: translate(-50%, -50%);
-    font-size: 10px;
   }
   25% {
-    transform: translate(-50%, -50%) translateX(-5px);
-    font-size: 30px;
+    transform: translate(-50%, -50%) translateX(-2px);
   }
   50% {
-    transform: translate(-50%, -50%) translateX(5px);
-    font-size: 30px;
+    transform: translate(-50%, -50%) translateX(2px);
   }
   75% {
-    transform: translate(-50%, -50%) translateX(-5px);
-    font-size: 30px;
+    transform: translate(-50%, -50%) translateX(-2px);
   }
 }
 </style>

@@ -119,16 +119,16 @@ export default {
       switch (newMode) {
         case 'chat':
           mainStage.style.flex = '4 1 0';
-          leftStage.style.flex = '1 1 0';
+          leftStage.style.flex = '2 1 0';
           rightStage.style.flex = '2 1 0';
           break;
         case 'help':
-          mainStage.style.flex = '4 1 0';
+          mainStage.style.flex = '8 1 0';
           leftStage.style.flex = '0 0 0';
           rightStage.style.flex = '0 0 0'
           break;
         case 'expert':
-          mainStage.style.flex = '4 1 0';
+          mainStage.style.flex = '6 1 0';
           leftStage.style.flex = '0 0 0';
           rightStage.style.flex = '2 1 0';
           break;
