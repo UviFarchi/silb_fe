@@ -151,7 +151,8 @@ export default {
         let permittedTokens = [
           'eyJuYW1lIjoiSm9yZGkgQnJvdG9ucyIsIm9yZyI6IklDQUIifQ==', //Jordi
           'eyJuYW1lIjoiQWxtb2cgSGl6a3kiLCJvcmciOiJJbnZlc3RtZW50IGluIEJhcmNlbG9uYSJ9', //Almog
-          'eyJuYW1lIjoiUmV1dmVuIEZhcmNoaSIsIm9yZyI6IlNJTEIifQ==' //Uvi
+          'eyJuYW1lIjoiUmV1dmVuIEZhcmNoaSIsIm9yZyI6IlNJTEIifQ==', //Uvi
+          'eyJuYW1lIjoiR3VpbGxlcm1vIE1hcnRpbiBIaXJzY2hmaWVsZCIsIm9yZyI6IklDQU0ifQ==' //Guillermo
         ]
         return permittedTokens.includes(token);
       }
